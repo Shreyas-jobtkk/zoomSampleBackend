@@ -50,6 +50,11 @@ const coerceRequestBody = (body) => ({
   )
 })
 
+// Basic route
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
+
 app.post('/', (req, res) => {
   const requestBody = coerceRequestBody(req.body)
   const validationErrors = validateRequest(requestBody, propValidations, schemaValidations)
