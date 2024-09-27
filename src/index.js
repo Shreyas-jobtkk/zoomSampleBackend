@@ -9,5 +9,5 @@ app.get('/', (req, res) => {
 // Use the port from Render's environment or default to 10000
 const port = process.env.PORT || 10000;
 app.listen(port, () => {
-  console.log(`Zoom Meeting SDK Auth Endpoint Sample Node.js, listening on port ${port}!`);
+  console.log(` listening on port ${port}!`);
 });
