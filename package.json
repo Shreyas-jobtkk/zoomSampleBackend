@@ -7,7 +7,7 @@
   "scripts": {
     "format": "prettier --write src/*.js",
     "prepare": "husky install",
-    "start": "node src/index.js"
+    "start": "nodemon src/index.js"
   },
   "author": "Zoom Video Communications, Inc.",
   "contributors": [
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "husky": "^8.0.0",
+    "nodemon": "^3.1.7",
     "prettier": "^3.1.1"
   }
 }
