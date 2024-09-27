@@ -3,7 +3,7 @@ const app = express();
 
 // Basic route
 app.get('/', (req, res) => {
-  res.send('Hello, World2!');
+  res.send('Hello, World!');
 });
 
 // Use the port from Render's environment or default to 10000
