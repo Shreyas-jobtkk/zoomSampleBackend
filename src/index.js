@@ -1,7 +1,6 @@
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
-import helmet from 'helmet'; // Add this import
 import { KJUR } from 'jsrsasign'
 import { inNumberArray, isBetween, isRequiredAllOrNone, validateRequest } from './validations.js'
 
@@ -33,31 +32,8 @@ dotenv.config()
 const app = express()
 const port = process.env.PORT || 4000
 
-// Use helmet for security headers
-app.use(helmet());  // This automatically includes the necessary security headers
-
-// Explicitly set security headers
-app.use((req, res, next) => {
-  // Strict-Transport-Security
-  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-
-  // X-Content-Type-Options
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-
-  // Content-Security-Policy (Example: allow scripts from self and trusted sources)
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' https://trusted-scripts.com"
-  );
-
-  // Referrer-Policy
-  res.setHeader('Referrer-Policy', 'no-referrer');
-
-  next();
-});
-
-app.use(express.json(), cors());
-app.options('*', cors());
+app.use(express.json(), cors())
+app.options('*', cors())
 
 const propValidations = {
   role: inNumberArray([0, 1]),
