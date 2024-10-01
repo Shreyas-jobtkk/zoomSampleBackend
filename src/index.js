@@ -57,21 +57,21 @@ app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
 
-app.use((req, res, next) => {
-  res.append('Access-Control-Allow-Origin', 'https://zoomfrontendapp.netlify.app'); // Allow specific origin
-  res.append('X-Content-Type-Options', 'nosniff');
-  res.append('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload'); // Added 'preload' for better security
-  res.append("Referrer-Policy", "no-referrer");
-  res.append('Content-Security-Policy', 
-    "default-src 'self' https://zoomfrontendapp.netlify.app; " +
-    "script-src 'self' https:* 'unsafe-inline' 'unsafe-eval'; " +
-    "style-src 'self' 'unsafe-inline'; " +
-    "img-src 'self' data: blob:; " +
-    "connect-src 'self' https://*.spotilocal.com;");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.append('Access-Control-Allow-Origin', 'https://zoomfrontendapp.netlify.app'); // Allow specific origin
+//   res.append('X-Content-Type-Options', 'nosniff');
+//   res.append('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload'); // Added 'preload' for better security
+//   res.append("Referrer-Policy", "no-referrer");
+//   res.append('Content-Security-Policy', 
+//     "default-src 'self' https://zoomfrontendapp.netlify.app; " +
+//     "script-src 'self' https:* 'unsafe-inline' 'unsafe-eval'; " +
+//     "style-src 'self' 'unsafe-inline'; " +
+//     "img-src 'self' data: blob:; " +
+//     "connect-src 'self' https://*.spotilocal.com;");
+//   next();
+// });
 
-app.use('/', express.static('public/dist'))
+// app.use('/', express.static('public/dist'))
 
 app.post('/', (req, res) => {
   const requestBody = coerceRequestBody(req.body)
