@@ -50,10 +50,24 @@ const coerceRequestBody = (body) => ({
   )
 })
 
+
+
 // Basic route
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
+
+app.use((req, res, next) => {
+  res.append('Access-Control-Allow-Origin', ['*']);
+  res.append('X-Content-Type-Options', "nosniff");
+  res.append("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  res.append("Referrer-Policy", "no-referrer");
+  res.append("Content-Security-Policy", 
+      "default-src * data: blob: 'self' wss: ws: localhost:; script-src https:* 127.0.0.1:* *.spotilocal.com:* 'unsafe-inline' 'unsafe-eval' blob: data: 'self'; style-src data: blob: 'unsafe-inline' 'self'");
+  next();
+});
+
+app.use('/', express.static('public/dist'))
 
 app.post('/', (req, res) => {
   const requestBody = coerceRequestBody(req.body)
