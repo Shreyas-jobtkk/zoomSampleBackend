@@ -35,6 +35,27 @@ const port = process.env.PORT || 4000
 
 // Use helmet for security headers
 app.use(helmet());  // This automatically includes the necessary security headers
+
+// Explicitly set security headers
+app.use((req, res, next) => {
+  // Strict-Transport-Security
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+
+  // X-Content-Type-Options
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+
+  // Content-Security-Policy (Example: allow scripts from self and trusted sources)
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' https://trusted-scripts.com"
+  );
+
+  // Referrer-Policy
+  res.setHeader('Referrer-Policy', 'no-referrer');
+
+  next();
+});
+
 app.use(express.json(), cors());
 app.options('*', cors());
 
