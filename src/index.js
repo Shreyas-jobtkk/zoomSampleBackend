@@ -30,6 +30,21 @@ let db = [
 
 dotenv.config()
 const app = express()
+
+// Middleware to set security headers
+app.use((req, res, next) => {
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self';");
+  res.setHeader('Referrer-Policy', 'no-referrer-when-downgrade');
+  next();
+});
+
+// Your routes here
+app.get('/', (req, res) => {
+  res.send('<html><body>Your HTML content here</body></html>');
+});
+
 const port = process.env.PORT || 4000
 
 app.use(express.json(), cors())
