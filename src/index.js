@@ -1,8 +1,10 @@
-import cors from 'cors'
-import dotenv from 'dotenv'
-import express from 'express'
+import express from 'express';
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
+import cors from 'cors';  // Import cors
 import { KJUR } from 'jsrsasign'
 import { inNumberArray, isBetween, isRequiredAllOrNone, validateRequest } from './validations.js'
+import dotenv from 'dotenv'
 
 let db = [
   {
@@ -29,11 +31,28 @@ let db = [
 ]
 
 dotenv.config()
-const app = express()
-const port = process.env.PORT || 4000
 
+const port = process.env.PORT || 4000;
+
+const app = express();
 app.use(express.json(), cors())
 app.options('*', cors())
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    // origin: 'http://localhost:5173', // Allow requests from this origin
+    origin: 'https://zoomfrontendapp.netlify.app/', // Allow requests from this origin
+    methods: ['GET', 'POST'], // Specify allowed methods
+    credentials: true, // Allow cookies or authentication headers
+  },
+});
+
+// Use CORS middleware to enable cross-origin requests
+app.use(cors({
+  origin: 'https://zoomfrontendapp.netlify.app/', // Your frontend's origin
+  methods: ['GET', 'POST'],
+  credentials: true,
+}));
 
 const propValidations = {
   role: inNumberArray([0, 1]),
@@ -49,29 +68,6 @@ const coerceRequestBody = (body) => ({
     {}
   )
 })
-
-
-
-// Basic route
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
-
-// app.use((req, res, next) => {
-//   res.append('Access-Control-Allow-Origin', 'https://zoomfrontendapp.netlify.app'); // Allow specific origin
-//   res.append('X-Content-Type-Options', 'nosniff');
-//   res.append('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload'); // Added 'preload' for better security
-//   res.append("Referrer-Policy", "no-referrer");
-//   res.append('Content-Security-Policy', 
-//     "default-src 'self' https://zoomfrontendapp.netlify.app; " +
-//     "script-src 'self' https:* 'unsafe-inline' 'unsafe-eval'; " +
-//     "style-src 'self' 'unsafe-inline'; " +
-//     "img-src 'self' data: blob:; " +
-//     "connect-src 'self' https://*.spotilocal.com;");
-//   next();
-// });
-
-// app.use('/', express.static('public/dist'))
 
 app.post('/', (req, res) => {
   const requestBody = coerceRequestBody(req.body)
@@ -99,7 +95,7 @@ app.post('/', (req, res) => {
   const sHeader = JSON.stringify(oHeader)
   const sPayload = JSON.stringify(oPayload)
   const sdkJWT = KJUR.jws.JWS.sign('HS256', sHeader, sPayload, process.env.ZOOM_MEETING_SDK_SECRET)
-  return res.json({ signature: sdkJWT, data:db })
+  return res.json({ signature: sdkJWT, data: db })
 })
 
 // Route to get the db data
@@ -107,4 +103,37 @@ app.get('/api/users', (req, res) => {
   res.json(db);
 });
 
-app.listen(port, () => console.log(`Zoom Meeting SDK Auth Endpoint Sample Node.js, listening on port ${port}!`))
+// Define API routes
+app.post('/api/data', (req, res) => {
+  const data = req.body;
+  console.log('Data received from frontend API:', data);
+  res.json({ message: 'Data received successfully', data });
+});
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+
+  socket.on('dataFromFrontend', (data) => {
+    console.log('Data received from frontend (via Socket.io):', data);
+    io.emit('message', data);
+    console.log(data);
+  });
+});
+
+
+// io.on('connection', (socket) => {
+//   console.log('A user connected');
+
+//   // Send data to the client every 5 seconds
+//   setInterval(() => {
+//       const data = { message: 'Hello from the server!', timestamp: new Date() };
+//       socket.emit('message', data);
+//   }, 1000);
+
+
+// });
+
+// Start the server
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
