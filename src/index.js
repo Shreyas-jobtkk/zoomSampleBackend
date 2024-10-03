@@ -40,8 +40,8 @@ app.options('*', cors())
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    // origin: 'http://localhost:5173', // Allow requests from this origin
-    origin: 'https://zoomfrontendapp.netlify.app', // Allow requests from this origin
+    origin: true, // Allow requests from this origin
+    // origin: 'https://zoomfrontendapp.netlify.app', // Allow requests from this origin
     methods: ['GET', 'POST'], // Specify allowed methods
     credentials: true, // Allow cookies or authentication headers
   },
@@ -49,8 +49,8 @@ const io = new Server(server, {
 
 // Use CORS middleware to enable cross-origin requests
 app.use(cors({
-  origin: 'https://zoomfrontendapp.netlify.app', // Your frontend's origin
-  // origin: 'http://localhost:5173', // Your frontend's origin
+  // origin: 'https://zoomfrontendapp.netlify.app', // Your frontend's origin
+  origin: true,// Your frontend's origin
   methods: ['GET', 'POST'],
   credentials: true,
 }));
