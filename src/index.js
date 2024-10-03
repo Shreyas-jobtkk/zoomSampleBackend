@@ -32,7 +32,7 @@ let db = [
 
 dotenv.config()
 
-const port = process.env.PORT;
+const port = process.env.PORT || 4000;
 
 const app = express();
 app.use(express.json(), cors())
@@ -54,6 +54,8 @@ app.use(cors({
   methods: ['GET', 'POST'],
   credentials: true,
 }));
+
+app.options('*', cors());
 
 const propValidations = {
   role: inNumberArray([0, 1]),
