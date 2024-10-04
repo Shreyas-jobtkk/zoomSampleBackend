@@ -56,15 +56,52 @@ app.use(cors({
 }));
 
 
-app.use((req, res, next) => {
-    res.append('X-Content-Type-Options', "nosniff");
-    res.append("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-    res.append("Referrer-Policy", "no-referrer");
-    res.append("Content-Security-Policy", "default-src * data: blob: 'self'  wss: ws: localhost:; script-src https:* 127.0.0.1:* *.spotilocal.com:* 'unsafe-inline' 'unsafe-eval' blob: data: 'self'; style-src data: blob: 'unsafe-inline' 'self'");
-    next();
-});
+// app.use((req, res, next) => {
+//     res.append('X-Content-Type-Options', "nosniff");
+//     res.append("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+//     res.append("Referrer-Policy", "no-referrer");
+//     res.append("Content-Security-Policy", "default-src * data: blob: 'self'  wss: ws: localhost:; script-src https:* 127.0.0.1:* *.spotilocal.com:* 'unsafe-inline' 'unsafe-eval' blob: data: 'self'; style-src data: blob: 'unsafe-inline' 'self'");
+//     next();
+// });
 
 // app.use('/', express.static('public/dist'))
+
+import helmet from 'helmet';
+
+app.use(helmet());
+
+// Customizing Content-Security-Policy
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"], // Adjust based on your app's needs
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  })
+);
+
+// Referrer-Policy (no-referrer-when-downgrade is a common policy)
+app.use(helmet.referrerPolicy({ policy: 'no-referrer-when-downgrade' }));
+
+const corsOptions = {
+  origin: 'http://localhost:5173', // Replace with your frontend URL
+  credentials: true, // Allows cookies, authorization headers, etc.
+};
+
+app.use(cors(corsOptions));
+
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
+
+// Other routes and middleware
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
 
 app.options('*', cors());
 
