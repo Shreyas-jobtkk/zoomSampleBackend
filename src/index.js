@@ -5,6 +5,9 @@ import cors from 'cors';  // Import cors
 import { KJUR } from 'jsrsasign'
 import { inNumberArray, isBetween, isRequiredAllOrNone, validateRequest } from './validations.js'
 import dotenv from 'dotenv'
+import axios from 'axios';
+import helmet from 'helmet';
+import fetch from 'node-fetch';
 
 let db = [
   {
@@ -30,8 +33,7 @@ let db = [
   }
 ]
 
-dotenv.config()
-
+dotenv.config(); 
 const port = process.env.PORT || 4000;
 
 const app = express();
@@ -66,7 +68,7 @@ app.use(cors({
 
 // app.use('/', express.static('public/dist'))
 
-import helmet from 'helmet';
+
 
 app.use(helmet());
 
@@ -86,7 +88,7 @@ app.use(
 app.use(helmet.referrerPolicy({ policy: 'no-referrer-when-downgrade' }));
 
 const corsOptions = {
-  origin: 'http://localhost:5173', // Replace with your frontend URL
+  origin: true, // Replace with your frontend URL
   credentials: true, // Allows cookies, authorization headers, etc.
 };
 
@@ -149,25 +151,27 @@ app.post('/', (req, res) => {
   return res.json({ signature: sdkJWT, data: db })
 })
 
-// Route to get the db data
-app.get('/api/users', (req, res) => {
-  res.json(db);
-});
+
 
 // Define API routes
 app.post('/api/data', (req, res) => {
   const data = req.body;
-  console.log('Data received from frontend API:', data);
+  // console.log('Data received from frontend API:', data);
   res.json({ message: 'Data received successfully', data });
 });
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  // console.log('a user connected');
 
   socket.on('dataFromFrontend', (data) => {
-    console.log('Data received from frontend (via Socket.io):', data);
+    // console.log('Data received from frontend (via Socket.io):', data);
     io.emit('message', data);
     console.log(data);
+    if (data == "calling") {
+      // Call the createMeeting function
+      createMeeting();
+      // io.emit('url', data);
+    }
   });
 });
 
@@ -183,6 +187,108 @@ io.on('connection', (socket) => {
 
 
 // });
+
+// // Your credentials
+const clientId = process.env.CLIENT_ID;
+const clientSecret = process.env.CLIENT_SECRET;
+const accountId = process.env.ACCOUNT_ID;
+
+// Encode client ID and client secret in Base64
+const encodedCredentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+// Set up headers for the request
+const headers = {
+  'Content-Type': 'application/x-www-form-urlencoded',
+  'Authorization': `Basic ${encodedCredentials}`
+};
+
+let ACCESS_TOKEN;
+
+// Set up the body of the access token request
+const body = new URLSearchParams({
+  grant_type: 'account_credentials',
+  account_id: accountId // Ensure accountId is defined
+});
+
+// Function to get access token from Zoom API
+async function getAccessToken() {
+  try {
+    const response = await fetch('https://zoom.us/oauth/token', {
+      method: 'POST',
+      headers: headers, // Ensure headers is defined
+      body: body
+    });
+
+    // Check if response is OK (status 200-299)
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    ACCESS_TOKEN = data.access_token;
+
+    // Log the access token and its type
+    // console.log('Access Token:', data.access_token);
+    // console.log('Token Type:', data.token_type);
+    // console.log('Expires In:', data.expires_in); // This is usually 3600 seconds (1 hour)
+    // console.log('Scope:', data.scope);
+    // console.log('data:', data);
+  } catch (error) {
+    console.error('Error fetching access token:', error);
+  }
+}
+
+async function createMeeting() {
+  // Call the function to get the access token
+  await getAccessToken(); // Wait for the access token to be set
+
+  const url = `https://api.zoom.us/v2/users/me/meetings`;
+
+  const meetingData = {
+    topic: 'Sample Meeting',
+    type: 1, // Instant Meeting
+    duration: 30, // Duration in minutes
+    agenda: 'Discuss project updates',
+  };
+
+  try {
+    const response = await axios.post(url, meetingData, {
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('Meeting start_url:', response.data.start_url);
+    console.log('Meeting join_url:', response.data.join_url);
+
+    const startUrl = response.data.start_url;
+    const joinUrl = response.data.join_url;
+
+    io.emit('url', joinUrl);
+    io.emit('startUrl', startUrl);
+
+    // Route to get the URL data
+    app.get('/api/url', (req, res) => {
+      res.json({
+        start_url: startUrl,
+        join_url: joinUrl
+      });
+    });
+
+
+  } catch (error) {
+    console.error('Error creating meeting:', error.response ? error.response.data : error.message);
+  }
+}
+
+// Route to get the db data
+app.get('/api/users', (req, res) => {
+  res.json(db);
+});
+
+// // Call the createMeeting function
+// createMeeting();
 
 // Start the server
 server.listen(port, () => {
