@@ -1,14 +1,15 @@
 import express from 'express';
 import { Server } from 'socket.io';
 import cors from 'cors';  // Import cors
-// import { getTableDetails } from './routes/fetchTerminals.js';
-// import { updateUserStatus } from './routes/updateTerminal.js';
+import helmet from 'helmet';
+import { getTableDetails } from './routes/fetchTerminals.js';
+import { updateUserStatus } from './routes/updateTerminal.js';
 import http from 'http';
 import { createMeeting } from './createMeeting.js';
 import signature from './signature.js';
 
-// updateUserStatus(1, 'inactive5')
-// getTableDetails();
+updateUserStatus(1, 'inactive5')
+getTableDetails();
 
 // dotenv.config(); 
 // dotenv.config()
@@ -30,36 +31,36 @@ const io = new Server(server, {
 });
 
 // Use CORS middleware to enable cross-origin requests
-// app.use(cors({
-//   // origin: 'https://zoomfrontendapp.netlify.app', // Your frontend's origin
-//   origin: true,// Your frontend's origin
-//   methods: ['GET', 'POST'],
-//   credentials: true,
-// }));
+app.use(cors({
+  // origin: 'https://zoomfrontendapp.netlify.app', // Your frontend's origin
+  origin: true,// Your frontend's origin
+  methods: ['GET', 'POST'],
+  credentials: true,
+}));
 
-// app.use(helmet());
+app.use(helmet());
 
-// // Customizing Content-Security-Policy
-// app.use(
-//   helmet.contentSecurityPolicy({
-//     directives: {
-//       defaultSrc: ["'self'"],
-//       scriptSrc: ["'self'", "'unsafe-inline'"], // Adjust based on your app's needs
-//       objectSrc: ["'none'"],
-//       upgradeInsecureRequests: [],
-//     },
-//   })
-// );
+// Customizing Content-Security-Policy
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"], // Adjust based on your app's needs
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  })
+);
 
-// // Referrer-Policy (no-referrer-when-downgrade is a common policy)
-// app.use(helmet.referrerPolicy({ policy: 'no-referrer-when-downgrade' }));
+// Referrer-Policy (no-referrer-when-downgrade is a common policy)
+app.use(helmet.referrerPolicy({ policy: 'no-referrer-when-downgrade' }));
 
-// const corsOptions = {
-//   origin: true, // Replace with your frontend URL
-//   credentials: true, // Allows cookies, authorization headers, etc.
-// };
+const corsOptions = {
+  origin: true, // Replace with your frontend URL
+  credentials: true, // Allows cookies, authorization headers, etc.
+};
 
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-store');
