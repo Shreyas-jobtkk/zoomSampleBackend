@@ -38,40 +38,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// app.use(helmet());
-
-// // Customizing Content-Security-Policy
-// app.use(
-//   helmet.contentSecurityPolicy({
-//     directives: {
-//       defaultSrc: ["'self'"],
-//       scriptSrc: ["'self'", "'unsafe-inline'"], // Adjust based on your app's needs
-//       objectSrc: ["'none'"],
-//       upgradeInsecureRequests: [],
-//     },
-//   })
-// );
-
-// // Referrer-Policy (no-referrer-when-downgrade is a common policy)
-// app.use(helmet.referrerPolicy({ policy: 'no-referrer-when-downgrade' }));
-
-// const corsOptions = {
-//   origin: true, // Replace with your frontend URL
-//   credentials: true, // Allows cookies, authorization headers, etc.
-// };
-
-// app.use(cors(corsOptions));
-
-// app.use((req, res, next) => {
-//   res.set('Cache-Control', 'no-store');
-//   next();
-// });
-
-// // Other routes and middleware
-// app.get('/', (req, res) => {
-//   res.send('Hello, World!');
-// });
-
 app.options('*', cors());
 
 io.on('connection', (socket) => {
