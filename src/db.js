@@ -2,15 +2,17 @@
 
 import pg from 'pg'; // Import the entire pg module
 const { Pool } = pg; // Destructure the Pool class from the pg module
+import dotenv from 'dotenv'
 
-// PostgreSQL connection configuration
+dotenv.config()
+
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'firstDB',
-    password: 'postgre',
-    port: 5432,
+    // connectionString: DATABASE_URL,
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: true, // Set to true if you need strict SSL verification
+    },
+ 
 });
 
-// Export the pool for use in other files
 export default pool;
