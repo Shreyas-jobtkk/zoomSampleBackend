@@ -2,13 +2,14 @@ import pool from '../db.js'; // Import the database connection
 
 
 const updateUserStatus = async (userId, newStatus) => {
+    console.log(144,userId, newStatus)
     try {
         // Acquire a client from the pool
         const client = await pool.connect();
 
         // Execute the query to update the user's status in the database
         const result = await client.query(
-            'UPDATE terminals SET status = $1 WHERE id = $2 RETURNING *', // Parameterized query
+            'UPDATE terminals SET status = $1 WHERE terminal_id = $2 RETURNING *', // Parameterized query
             [newStatus, userId] // Parameters to prevent SQL injection
         );
 

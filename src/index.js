@@ -58,27 +58,29 @@ app.use('/', signature);
 // console.log(144,await getTableDetails())
 
 app.post('/api/userActivity', async(req, res) => {
-  const { id, personStatus } = req.body;
+  const { terminal_id, personStatus } = req.body;
   console.log('Received:', req.body);
+  console.log(122);
 
   // Respond with a success message
-  res.json({ message: 'Data received successfully', data: { id, personStatus } });
+  res.json({ message: 'Data received successfully', data: { terminal_id, personStatus } });
 
-  updateUserStatus(id, personStatus)
+  updateUserStatus(terminal_id, personStatus)
 
 });
 
-app.post('/user/activity', (req, res) => {
-  const { active } = req.body;
+// app.post('/user/activity', (req, res) => {
+//   const { active } = req.body;
   
-  if (!active) {
-    console.log('User is inactive');
-  } 
+//   if (!active) {
+//     console.log('User is inactive');
+//   } 
 
-  res.status(200).send('Activity status received');
-});
+//   res.status(200).send('Activity status received');
+// });
 
 app.get('/api/users', async (req, res) => {
+  console.log(157)
   try {
     const users = await getTableDetails(); // Await inside an async function
     res.json(users);

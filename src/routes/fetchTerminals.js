@@ -12,7 +12,4 @@ const getTableDetails = async () => {
     }
 };
 
-
-
-
 export { getTableDetails };
