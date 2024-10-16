@@ -77,6 +77,14 @@ export async function createMeeting() {
                 'Content-Type': 'application/json',
             },
         });
+        // const response = await fetch(url, {
+        //     method: 'POST',
+        //     headers: {
+        //         Authorization: `Bearer ${ACCESS_TOKEN}`,
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(meetingData),
+        // });
 
         console.log('Meeting start_url:', response.data.start_url);
         console.log('Meeting join_url:', response.data.join_url);

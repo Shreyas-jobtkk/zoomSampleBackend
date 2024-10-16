@@ -1,8 +1,8 @@
 import express from 'express';
 import { Server } from 'socket.io';
 import cors from 'cors';  // Import cors
-import helmet from 'helmet';
-import { getTableDetails } from './routes/fetchTerminals.js';
+import { getTerminalDetails } from './routes/fetchTerminals.js';
+import { getUserDetails } from './routes/fetchUsers.js';
 import { updateUserStatus } from './routes/updateTerminal.js';
 import http from 'http';
 import { createMeeting } from './createMeeting.js';
@@ -12,17 +12,37 @@ import pool from './db.js';
 // Test the database connection
 pool.connect((err, client, release) => {
   if (err) {
-      console.error('Error connecting to the database:', err.stack);
+    console.error('Error connecting to the database:', err.stack);
   } else {
-      console.log('Connected to the PostgreSQL database');
+    console.log('Connected to the PostgreSQL database');
   }
 });
 
-// updateUserStatus(1, 'inactive')
-getTableDetails();
+// const sampleData = {
+//   terminal_id: 5,
+//   person_name: 'John Doe',
+//   institution_id: 101,
+//   name_of_institution: 'Tech Corp',
+//   call_started: '2024-10-15 09:30:00',
+//   call_ended: '2024-10-15 09:45:00',
+//   duration: '00:15:00',
+// }
 
-// dotenv.config(); 
-// dotenv.config()
+// await pool.query(
+//   `INSERT INTO callLog (terminal_id, person_name, institution_id, name_of_institution, call_started, call_ended, duration)
+//    VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+//   [
+//     sampleData.terminal_id,
+//     sampleData.person_name,
+//     sampleData.institution_id,
+//     sampleData.name_of_institution,
+//     sampleData.call_started,
+//     sampleData.call_ended,
+//     sampleData.duration,
+//   ]
+// );
+
+// getUserDetails();
 const port = process.env.PORT || 4000;
 
 const app = express();
@@ -31,60 +51,33 @@ app.options('*', cors())
 
 app.use('/', signature);
 
-// app.patch('/api/person/:id', async (req, res) => {
-//   const { id } = req.params;
-//   const { status } = req.body; // Expecting the new status in the request body
-
-//   try {
-//       const result = await pool.query(
-//           'UPDATE persons SET status = $1 WHERE id = $2 RETURNING *',
-//           [status, id]
-//       );
-
-//       if (result.rows.length > 0) {
-//           res.json({
-//               message: 'Status updated successfully',
-//               person: result.rows[0],
-//           });
-//       } else {
-//           res.status(404).json({ message: 'Person not found' });
-//       }
-//   } catch (err) {
-//       console.error(err);
-//       res.status(500).json({ message: 'Error updating status' });
-//   }
-// });
-
-// console.log(144,await getTableDetails())
-
-app.post('/api/userActivity', async(req, res) => {
+app.post('/api/terminalActivity', async (req, res) => {
   const { terminal_id, personStatus } = req.body;
   console.log('Received:', req.body);
   console.log(122);
 
   // Respond with a success message
   res.json({ message: 'Data received successfully', data: { terminal_id, personStatus } });
-
   updateUserStatus(terminal_id, personStatus)
-
 });
 
-// app.post('/user/activity', (req, res) => {
-//   const { active } = req.body;
-  
-//   if (!active) {
-//     console.log('User is inactive');
-//   } 
-
-//   res.status(200).send('Activity status received');
-// });
-
-app.get('/api/users', async (req, res) => {
+app.get('/api/terminals', async (req, res) => {
   console.log(157)
   try {
-    const users = await getTableDetails(); // Await inside an async function
+    const users = await getTerminalDetails(); // Await inside an async function
     res.json(users);
     console.log(155)
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users' });
+  }
+});
+
+app.get('/api/users', async (req, res) => {
+  console.log(257)
+  try {
+    const users = await getUserDetails(); // Await inside an async function
+    res.json(users);
+    console.log(255)
   } catch (error) {
     res.status(500).json({ message: 'Error fetching users' });
   }

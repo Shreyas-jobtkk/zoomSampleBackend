@@ -1,10 +1,10 @@
 import pool from '../db.js'; // Import the database connection
 
-const getTerminalDetails = async () => {
+const getUserDetails = async () => {
     try {
         const client = await pool.connect();
-        const res = await client.query('SELECT * FROM terminals'); // Replace with your actual query
-        console.log(res.rows);
+        const res = await client.query('SELECT * FROM institution'); // Replace with your actual query
+        console.log(445,res.rows);
         client.release(); // Release the client back to the pool
         return res.rows
     } catch (err) {
@@ -12,4 +12,4 @@ const getTerminalDetails = async () => {
     }
 };
 
-export { getTerminalDetails };
+export { getUserDetails };
