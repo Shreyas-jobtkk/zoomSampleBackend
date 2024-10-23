@@ -205,6 +205,8 @@ io.on('connection', (socket) => {
                 terminal_id: matchedTerminal.terminal_id,
                 uniqueId: matchingResult.uniqueId,
               };
+
+              console.log(3177, adminData);
   
               io.emit('message', adminData);
   
