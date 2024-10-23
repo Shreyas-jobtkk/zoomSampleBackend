@@ -4,7 +4,7 @@ const getTerminalDetails = async () => {
     try {
         const client = await pool.connect();
         const res = await client.query('SELECT * FROM terminals'); // Replace with your actual query
-        console.log(res.rows);
+        // console.log(res.rows);
         client.release(); // Release the client back to the pool
         return res.rows
     } catch (err) {
