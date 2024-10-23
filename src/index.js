@@ -15,7 +15,7 @@ pool.connect((err) => {
   if (err) {
     console.error('Error connecting to the database:', err.stack);
   } else {
-    console.log('Connected to the PostgreSQL database');
+    // console.log('Connected to the PostgreSQL database');
   }
 });
 
@@ -30,8 +30,8 @@ app.use('/', signature);
 
 app.post('/api/terminalActivity', async (req, res) => {
   const { terminal_id, personStatus } = req.body;
-  // console.log('Received:', req.body);
-  // console.log(122);
+  // // console.log('Received:', req.body);
+  // // console.log(122);
 
   // Respond with a success message
   res.json({ message: 'Data received successfully', data: { terminal_id, personStatus } });
@@ -39,7 +39,7 @@ app.post('/api/terminalActivity', async (req, res) => {
 });
 
 app.get('/api/terminals', async (req, res) => {
-  // console.log(157)
+  // // console.log(157)
   try {
     const users = await getTerminalDetails(); // Await inside an async function
     res.json(users);
@@ -50,17 +50,17 @@ app.get('/api/terminals', async (req, res) => {
 });
 
 app.get('/api/users', async (req, res) => {
-  // console.log(257)
+  // // console.log(257)
   try {
     const users = await getUserDetails(); // Await inside an async function
     res.json(users);
-    // console.log(255)
+    // // console.log(255)
   } catch (error) {
     res.status(500).json({ message: 'Error fetching users' });
   }
 });
 
-// console.log(145)
+// // console.log(145)
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -83,10 +83,10 @@ app.use(cors({
 let userRequests = []
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  // console.log('a user connected');
 
   socket.on('dataFromFrontend', async (data) => {
-    // console.log('Data received from frontend (via Socket.io):', data);
+    // // console.log('Data received from frontend (via Socket.io):', data);
     let connectingLink = data.dial
 
     // const meetingData = {
@@ -96,52 +96,54 @@ io.on('connection', (socket) => {
     // };
 
     // io.emit('url', meetingData);
-    console.log(114, connectingLink);
+    // console.log(114, connectingLink);
 
-    // console.log(115, data);
-    // console.log(116, data.uniqueId);
+    // // console.log(115, data);
+    // // console.log(116, data.uniqueId);
     if (connectingLink == 'disconnected') {
 
-      console.log(115, data)
+      // console.log(115, data)
 
       const adminData = {
         connectingLink: connectingLink,
         uniqueId: data.uniqueId
       };
 
-      console.log(215, data)
+      // console.log(215, data)
 
       io.emit('message', adminData);
       userRequests = userRequests.filter(item => item.uniqueId !== data.uniqueId);
     }
     if (connectingLink == 'calling') {
       // io.emit('message', adminData);
-      console.log(117, data);
+      // console.log(117, data);
+      
 
       userRequests.push(data); // Push data into the userRequests array
-      // console.log(116, data.translateLanguage, data.institutionid);
-      // console.log(118, userRequests);
+      // console.log(217, userRequests);
+      // // console.log(116, data.translateLanguage, data.institutionid);
+      // // console.log(118, userRequests);
 
       // let terminalData;
       // let intervalId;
 
       // async function fetchTerminalData() {
       //   terminalData = await getTerminalDetails();
-      //   // console.log(terminalData);  // This will log the data every second
+      //   // // console.log(terminalData);  // This will log the data every second
 
       //   const matchedTerminals = terminalData.filter(
       //     person => person.languages_known.includes(data.translateLanguage) && person.status === 'active'
       //   );
 
       //   if (matchedTerminals.length > 0) {
-      //     // console.log(189, matchedTerminals);
+      //     // // console.log(189, matchedTerminals);
       //     const meetingData = createMeeting();
       //     io.emit('url', meetingData);
       //     io.emit('startUrl', meetingData);
       //     clearInterval(intervalId);
       //   }
       //   else {
-      //     // console.log(189, "no speakers");
+      //     // // console.log(189, "no speakers");
       //   }
       // }
 
@@ -153,7 +155,8 @@ io.on('connection', (socket) => {
       console.log(115, data, 'terminal joined');
       const adminData = {
         connectingLink: connectingLink,
-        terminal_id: data.terminal_id
+        terminal_id: data.terminal_id,
+        uniqueId: data.uniqueId
       };
 
       io.emit('message', adminData);
@@ -162,23 +165,26 @@ io.on('connection', (socket) => {
     let matchingResult = null;
 
     async function connectUserTerminal() {
+      console.log("userRequests.length", userRequests.length,userRequests)
       // Loop through the data array
       if(userRequests.length > 0){
         for (let i = 0; i < userRequests.length; i++) {
 
           let terminalData = await getTerminalDetails();
   
-          // console.log(1144, terminalData)
+          // // console.log(1144, terminalData)
   
           terminalData = terminalData.filter(
             person => person.status === 'active'
           );
   
-          // console.log(1145, terminalData)
+          // // console.log(1145, terminalData)
   
           terminalData.sort((a, b) => new Date(a.event_time) - new Date(b.event_time));
   
-          console.log(32146, userRequests[i])
+          // console.log(32146, userRequests[i])
+
+          // console.log(11377, userRequests);
   
           const languagesTranslated = [...new Set(terminalData.flatMap(item => item.languages_known))];
   
@@ -192,7 +198,7 @@ io.on('connection', (socket) => {
             const matchedTerminal = terminalData.find(person => person.languages_known.includes(matchingResult.translateLanguage) && person.status === 'active');
   
             if (matchedTerminal) {
-              console.log(1245, matchedTerminal, "found terminal")
+              // console.log(1245, matchedTerminal, "found terminal")
   
               const meetingData = {
                 url: matchedTerminal.zoom_url,
@@ -201,27 +207,27 @@ io.on('connection', (socket) => {
               };
   
               const adminData = {
-                connectingLink: connectingLink,
+                connectingLink: 'calling',
                 terminal_id: matchedTerminal.terminal_id,
                 uniqueId: matchingResult.uniqueId,
               };
 
-              console.log(3177, adminData);
+              // console.log(3177, adminData);
   
               io.emit('message', adminData);
   
               io.emit('url', meetingData);
               io.emit('startUrl', meetingData);
   
-              console.log(1177, userRequests, matchingResult.uniqueId);
+              // console.log(1177, userRequests, matchingResult.uniqueId);
   
               userRequests = userRequests.filter(item => item.uniqueId !== matchingResult.uniqueId)
   
-              console.log(1277, userRequests, matchingResult.uniqueId);
+              // console.log(1277, userRequests, matchingResult.uniqueId);
             }
             else {
               matchingResult = "did not find terminal";
-              console.log(1146, matchingResult)
+              // console.log(1146, matchingResult)
             }
             // clearInterval(intervalId);
             // df
@@ -229,30 +235,49 @@ io.on('connection', (socket) => {
           }
         }
       } else {
-        console.log("no user request")
+        console.log("no user requests")
       }
     }
 
+    setInterval(connectUserTerminal, 100);
+
+    // function checkUserRequests() {
+    //   if (userRequests.length > 0) {
+    //     // If the condition is satisfied, call connectUserTerminal once
+    //     connectUserTerminal();
+    //   } else {
+    //     // If the condition is not satisfied, check again after 5 seconds
+    //     setTimeout(checkUserRequests, 5000);
+    //   }
+    // }
+    
+    // // Start the checking process
+    // checkUserRequests();
+
     // connectUserTerminal()
 
-    setInterval(connectUserTerminal, 2000);
+    // if(userRequests.length > 0) {
+    //   setInterval(connectUserTerminal, 5000);
+    // }
 
-    // console.log(244,  matchingUniqueId,typeof matchingUniqueId);
-    // console.log(244, typeof matchingUniqueId);
+    
 
-    console.log(1377, userRequests);
+    // // console.log(244,  matchingUniqueId,typeof matchingUniqueId);
+    // // console.log(244, typeof matchingUniqueId);
+
+    
 
 
 
     // if (matchedTerminals.length > 0) {
-    //   // console.log(189, matchedTerminals);
+    //   // // console.log(189, matchedTerminals);
     //   const meetingData = createMeeting();
     //   io.emit('url', meetingData);
     //   io.emit('startUrl', meetingData);
     //   // clearInterval(intervalId);
     // }
     // else {
-    //   // console.log(189, "no speakers");
+    //   // // console.log(189, "no speakers");
     // }
 
     // let terminalData;
@@ -260,25 +285,25 @@ io.on('connection', (socket) => {
 
     // async function fetchTerminalData() {
     //   terminalData = await getTerminalDetails();
-    //   // console.log(terminalData);  // This will log the data every second
+    //   // // console.log(terminalData);  // This will log the data every second
 
-    //   // console.log(151,terminalData)
+    //   // // console.log(151,terminalData)
 
     //   const matchedTerminals = terminalData.filter(
     //     person => person.languages_known.includes(data.translateLanguage) && person.status === 'active'
     //   );
 
-    //   console.log(155,matchedTerminals)
+    //   // console.log(155,matchedTerminals)
 
     //   if (matchedTerminals.length > 0) {
-    //     // console.log(189, matchedTerminals);
+    //     // // console.log(189, matchedTerminals);
     //     const meetingData = createMeeting();
     //     io.emit('url', meetingData);
     //     io.emit('startUrl', meetingData);
     //     clearInterval(intervalId);
     //   }
     //   else {
-    //     // console.log(189, "no speakers");
+    //     // // console.log(189, "no speakers");
     //   }
     // }
 
@@ -292,9 +317,13 @@ io.on('connection', (socket) => {
     // io.emit('startUrl', meetingData.start_url);
 
   });
+
+  // socket.on('userUniqueId', async (data) => {
+  //   console.log(133,data)
+  // });
 });
 
 // Start the server
 server.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+  // console.log(`Server listening on port ${port}`);
 });
