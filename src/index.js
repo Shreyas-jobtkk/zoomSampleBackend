@@ -117,7 +117,7 @@ io.on('connection', (socket) => {
     if (connectingLink == 'calling') {
       // io.emit('message', adminData);
       // console.log(117, data);
-      
+
 
       userRequests.push(data); // Push data into the userRequests array
       // console.log(217, userRequests);
@@ -164,82 +164,90 @@ io.on('connection', (socket) => {
 
     let matchingResult = null;
 
-    async function connectUserTerminal() {
-      console.log("userRequests.length", userRequests.length,userRequests)
-      // Loop through the data array
-      if(userRequests.length > 0){
-        for (let i = 0; i < userRequests.length; i++) {
+    function connectUserTerminal() {
 
-          let terminalData = await getTerminalDetails();
-  
-          // // console.log(1144, terminalData)
-  
-          terminalData = terminalData.filter(
-            person => person.status === 'active'
-          );
-  
-          // // console.log(1145, terminalData)
-  
-          terminalData.sort((a, b) => new Date(a.event_time) - new Date(b.event_time));
-  
-          // console.log(32146, userRequests[i])
+      async function loopToConnect() {
+        console.log("userRequests.length", userRequests.length, userRequests)
+        // Loop through the data array
+        if (userRequests.length > 0) {
+          for (let i = 0; i < userRequests.length; i++) {
 
-          // console.log(11377, userRequests);
-  
-          const languagesTranslated = [...new Set(terminalData.flatMap(item => item.languages_known))];
-  
-          // Check if the translateLanguage matches any in languagesToCheck
-          if (userRequests[i] && languagesTranslated.includes(userRequests[i].translateLanguage)) {
-            matchingResult = {
-              translateLanguage: userRequests[i].translateLanguage,
-              uniqueId: userRequests[i].uniqueId
-            };
-  
-            const matchedTerminal = terminalData.find(person => person.languages_known.includes(matchingResult.translateLanguage) && person.status === 'active');
-  
-            if (matchedTerminal) {
-              // console.log(1245, matchedTerminal, "found terminal")
-  
-              const meetingData = {
-                url: matchedTerminal.zoom_url,
-                uniqueId: matchingResult.uniqueId,
-                terminal_id: matchedTerminal.terminal_id
-              };
-  
-              const adminData = {
-                connectingLink: 'calling',
-                terminal_id: matchedTerminal.terminal_id,
-                uniqueId: matchingResult.uniqueId,
+            let terminalData = await getTerminalDetails();
+
+            // // console.log(1144, terminalData)
+
+            terminalData = terminalData.filter(
+              person => person.status === 'active'
+            );
+
+            // // console.log(1145, terminalData)
+
+            terminalData.sort((a, b) => new Date(a.event_time) - new Date(b.event_time));
+
+            // console.log(32146, userRequests[i])
+
+            // console.log(11377, userRequests);
+
+            const languagesTranslated = [...new Set(terminalData.flatMap(item => item.languages_known))];
+
+            // Check if the translateLanguage matches any in languagesToCheck
+            if (userRequests[i] && languagesTranslated.includes(userRequests[i].translateLanguage)) {
+              matchingResult = {
+                translateLanguage: userRequests[i].translateLanguage,
+                uniqueId: userRequests[i].uniqueId
               };
 
-              // console.log(3177, adminData);
-  
-              io.emit('message', adminData);
-  
-              io.emit('url', meetingData);
-              io.emit('startUrl', meetingData);
-  
-              // console.log(1177, userRequests, matchingResult.uniqueId);
-  
-              userRequests = userRequests.filter(item => item.uniqueId !== matchingResult.uniqueId)
-  
-              // console.log(1277, userRequests, matchingResult.uniqueId);
+              const matchedTerminal = terminalData.find(person => person.languages_known.includes(matchingResult.translateLanguage) && person.status === 'active');
+
+              if (matchedTerminal) {
+                // console.log(1245, matchedTerminal, "found terminal")
+
+                const meetingData = {
+                  url: matchedTerminal.zoom_url,
+                  uniqueId: matchingResult.uniqueId,
+                  terminal_id: matchedTerminal.terminal_id
+                };
+
+                const adminData = {
+                  connectingLink: 'calling',
+                  terminal_id: matchedTerminal.terminal_id,
+                  uniqueId: matchingResult.uniqueId,
+                };
+
+                // console.log(3177, adminData);
+
+                io.emit('message', adminData);
+
+                io.emit('url', meetingData);
+                io.emit('startUrl', meetingData);
+
+                // console.log(1177, userRequests, matchingResult.uniqueId);
+
+                userRequests = userRequests.filter(item => item.uniqueId !== matchingResult.uniqueId)
+
+                // console.log(1277, userRequests, matchingResult.uniqueId);
+              }
+              else {
+                matchingResult = "did not find terminal";
+                // console.log(1146, matchingResult)
+              }
+              // clearInterval(intervalId);
+              // df
+              // break; // Exit the loop once a match is found
             }
-            else {
-              matchingResult = "did not find terminal";
-              // console.log(1146, matchingResult)
-            }
-            // clearInterval(intervalId);
-            // df
-            // break; // Exit the loop once a match is found
           }
+        } else {
+          console.log("no user requests")
         }
-      } else {
-        console.log("no user requests")
+      }
+      if (userRequests.length > 0) {
+        return loopToConnect()
       }
     }
 
-    setInterval(connectUserTerminal, 100);
+    connectUserTerminal()
+
+    // setInterval(connectUserTerminal, 1000);
 
     // function checkUserRequests() {
     //   if (userRequests.length > 0) {
@@ -250,7 +258,7 @@ io.on('connection', (socket) => {
     //     setTimeout(checkUserRequests, 5000);
     //   }
     // }
-    
+
     // // Start the checking process
     // checkUserRequests();
 
@@ -260,12 +268,12 @@ io.on('connection', (socket) => {
     //   setInterval(connectUserTerminal, 5000);
     // }
 
-    
+
 
     // // console.log(244,  matchingUniqueId,typeof matchingUniqueId);
     // // console.log(244, typeof matchingUniqueId);
 
-    
+
 
 
 
