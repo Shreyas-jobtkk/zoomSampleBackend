@@ -2,7 +2,7 @@ import pool from '../db.js'; // Import the database connection
 
 
 const updateUserStatus = async (userId, newStatus) => {
-    console.log(144,userId, newStatus)
+    // console.log(144,userId, newStatus)
     try {
         // Acquire a client from the pool
         const client = await pool.connect();
