@@ -30,6 +30,7 @@ const handleWebSocket = () => {
                 io.emit('message', adminData);
                 userRequests = userRequests.filter(item => item.uniqueId !== data.uniqueId);
             }
+
             if (connectingLink == 'calling') {
                 // io.emit('message', adminData);
                 // console.log(117, data);
@@ -150,19 +151,6 @@ const handleWebSocket = () => {
                     console.log("no user requests")
                 }
             }
-
-            // if (userRequests.length > 0) {
-            //     const intervalId = setInterval(() => {
-            //         // Call the function to connect the user terminal
-            //         connectUserTerminal();
-
-            //         // Check the length of userRequests on each interval
-            //         if (userRequests.length === 0) {
-            //             console.log("userRequests.length is zero", userRequests.length);
-            //             clearInterval(intervalId);
-            //         }
-            //     }, 1000);
-            // }
 
             if (userRequests.length > 0) {
                 const executeAllRequests = () => {
