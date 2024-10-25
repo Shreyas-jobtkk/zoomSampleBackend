@@ -88,34 +88,11 @@ const handleWebSocket = () => {
                             // if (matchedTerminal && !tempArray.includes(matchedTerminal.terminal_id)) {
                             if (matchedTerminal) {
 
-
                                 const meetingData = {
                                     url: matchedTerminal.zoom_url,
                                     uniqueId: matchingResult.uniqueId,
                                     terminal_id: matchedTerminal.terminal_id
                                 };
-
-                                // function storeAndRemove(value, delay) {
-                                //     // Add the value to the array
-                                //     tempArray.push(value);
-                                //     console.log("Array after adding:", tempArray);
-
-                                //     // Remove the value after the specified delay (in milliseconds)
-                                //     setTimeout(() => {
-                                //         // Find the index of the value and remove it
-                                //         const index = tempArray.indexOf(value);
-                                //         if (index !== -1) {
-                                //             tempArray.splice(index, 1);
-                                //         }
-                                //         console.log("Array after removing:", tempArray);
-                                //     }, delay);
-                                // }
-
-
-                                // Example usage: store the value '5' for 3 seconds (3000 milliseconds)
-                                // storeAndRemove(matchedTerminal.terminal_id, 5000);
-
-                                // tempArray.push(matchedTerminal.terminal_id)
 
                                 const adminData = {
                                     connectingLink: 'calling',
@@ -142,9 +119,6 @@ const handleWebSocket = () => {
                                 matchingResult = "did not find terminal";
                                 // console.log(1146, matchingResult)
                             }
-                            // clearInterval(intervalId);
-                            // df
-                            // break; // Exit the loop once a match is found
                         }
                     }
                 } else {
