@@ -1,10 +1,13 @@
 import { io } from './index.js';
 import { getTerminalDetails } from './routes/fetchTerminals.js';
+import { updateUserStatus } from './routes/updateTerminal.js';
 
 const handleWebSocket = () => {
     let userRequests = []
-    let tempArray = [];
+    // let tempArray = [];
     let matchingResult = null;
+
+
 
     io.on('connection', (socket) => {
         // console.log('a user connected');
@@ -49,12 +52,12 @@ const handleWebSocket = () => {
 
                 // Loop through the data array
                 if (userRequests.length > 0) {
-                    console.log(889, tempArray)
+
                     for (let i = 0; i < userRequests.length; i++) {
 
                         let terminalData = await getTerminalDetails();
 
-                        // // console.log(1144, terminalData)
+                        // console.log(1144, terminalData)
 
                         terminalData = terminalData.filter(
                             person => person.status === 'active'
@@ -64,9 +67,11 @@ const handleWebSocket = () => {
 
                         terminalData.sort((a, b) => new Date(a.event_time) - new Date(b.event_time));
 
+                        // remove terinal ID for few seconds
+
                         // console.log(32146, userRequests[i])
 
-                        // console.log(11377, userRequests);
+                        console.log(11377, userRequests);
 
                         const languagesTranslated = [...new Set(terminalData.flatMap(item => item.languages_known))];
 
@@ -79,8 +84,9 @@ const handleWebSocket = () => {
 
                             const matchedTerminal = terminalData.find(person => person.languages_known.includes(matchingResult.translateLanguage) && person.status === 'active');
 
-                            if (matchedTerminal && !tempArray.includes(matchedTerminal.terminal_id)) {
-                                console.log(1245, matchedTerminal.terminal_id, tempArray)
+                            // if (matchedTerminal && !tempArray.includes(matchedTerminal.terminal_id)) {
+                            if (matchedTerminal) {
+
 
                                 const meetingData = {
                                     url: matchedTerminal.zoom_url,
@@ -88,24 +94,25 @@ const handleWebSocket = () => {
                                     terminal_id: matchedTerminal.terminal_id
                                 };
 
-                                function storeAndRemove(value, delay) {
-                                    // Add the value to the array
-                                    tempArray.push(value);
-                                    console.log("Array after adding:", tempArray);
+                                // function storeAndRemove(value, delay) {
+                                //     // Add the value to the array
+                                //     tempArray.push(value);
+                                //     console.log("Array after adding:", tempArray);
 
-                                    // Remove the value after the specified delay (in milliseconds)
-                                    setTimeout(() => {
-                                        // Find the index of the value and remove it
-                                        const index = tempArray.indexOf(value);
-                                        if (index !== -1) {
-                                            tempArray.splice(index, 1);
-                                        }
-                                        console.log("Array after removing:", tempArray);
-                                    }, delay);
-                                }
+                                //     // Remove the value after the specified delay (in milliseconds)
+                                //     setTimeout(() => {
+                                //         // Find the index of the value and remove it
+                                //         const index = tempArray.indexOf(value);
+                                //         if (index !== -1) {
+                                //             tempArray.splice(index, 1);
+                                //         }
+                                //         console.log("Array after removing:", tempArray);
+                                //     }, delay);
+                                // }
+
 
                                 // Example usage: store the value '5' for 3 seconds (3000 milliseconds)
-                                storeAndRemove(matchedTerminal.terminal_id, 5000);
+                                // storeAndRemove(matchedTerminal.terminal_id, 5000);
 
                                 // tempArray.push(matchedTerminal.terminal_id)
 
@@ -121,6 +128,8 @@ const handleWebSocket = () => {
 
                                 io.emit('url', meetingData);
                                 io.emit('startUrl', meetingData);
+
+                                await updateUserStatus(matchedTerminal.terminal_id, 'inactive')
 
                                 // console.log(1177, userRequests, matchingResult.uniqueId);
 
@@ -159,16 +168,16 @@ const handleWebSocket = () => {
                 const executeAllRequests = () => {
                     // Call the function to connect the user terminal
                     connectUserTerminal();
-            
+
                     // Check the length of userRequests after the function execution
                     if (userRequests.length === 0) {
                         console.log("userRequests.length is zero", userRequests.length);
                     } else {
                         // Schedule the next execution after 1 second
-                        setTimeout(executeAllRequests, 100);
+                        setTimeout(executeAllRequests, 5000);
                     }
                 };
-            
+
                 // Start the first execution
                 executeAllRequests();
             }
