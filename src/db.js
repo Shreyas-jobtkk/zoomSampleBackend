@@ -10,7 +10,7 @@ const pool = new Pool({
   // connectionString: DATABASE_URL,
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: true, // Set to true if you need strict SSL verification
+    rejectUnauthorized: false, // Set to true if you need strict SSL verification
   },
 });
 
