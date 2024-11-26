@@ -15,6 +15,22 @@ const handleWebSocket = () => {
         socket.on('dataFromFrontend', async (data) => {
             // // console.log('Data received from frontend (via Socket.io):', data);
             let connectingLink = data.dial
+            //  console.log(115, data)
+
+             if (connectingLink == 'forcible disconnect') {
+
+                console.log(118, data)
+
+                const adminData = {
+                    connectingLink: connectingLink,
+                    uniqueId: data.uniqueId
+                };
+
+                // // console.log(215, data)
+
+                io.emit('message', adminData);
+                // userRequests = userRequests.filter(item => item.uniqueId !== data.uniqueId);
+            }
 
             if (connectingLink == 'disconnected') {
 
@@ -25,7 +41,7 @@ const handleWebSocket = () => {
                     uniqueId: data.uniqueId
                 };
 
-                // console.log(215, data)
+                console.log(215, data)
 
                 io.emit('message', adminData);
                 userRequests = userRequests.filter(item => item.uniqueId !== data.uniqueId);
@@ -34,7 +50,8 @@ const handleWebSocket = () => {
             if (connectingLink == 'calling') {
                 // io.emit('message', adminData);
                 // console.log(117, data);
-                userRequests.push(data); // Push data into the userRequests array
+                userRequests.push(data);
+                console.log(117, userRequests);
             }
 
             if (connectingLink == 'terminal joined') {
@@ -49,7 +66,7 @@ const handleWebSocket = () => {
             }
 
             async function connectUserTerminal() {
-                console.log("userRequests.length", userRequests.length)
+                // console.log("userRequests.length", userRequests.length)
 
                 // Loop through the data array
                 if (userRequests.length > 0) {
@@ -64,15 +81,9 @@ const handleWebSocket = () => {
                             person => person.status === 'active'
                         );
 
-                        // // console.log(1145, terminalData)
-
                         terminalData.sort((a, b) => new Date(a.event_time) - new Date(b.event_time));
 
-                        // remove terinal ID for few seconds
-
-                        // console.log(32146, userRequests[i])
-
-                        console.log(11377, userRequests);
+                        // console.log(11377, userRequests.length);
 
                         const languagesTranslated = [...new Set(terminalData.flatMap(item => item.languages_known))];
 
@@ -83,46 +94,50 @@ const handleWebSocket = () => {
                                 uniqueId: userRequests[i].uniqueId
                             };
 
-                            const matchedTerminal = terminalData.find(person => person.languages_known.includes(matchingResult.translateLanguage) && person.status === 'active');
+                            const matchedTerminal = terminalData.find(person => person.languages_known.includes(matchingResult.translateLanguage));
 
-                            // if (matchedTerminal && !tempArray.includes(matchedTerminal.terminal_id)) {
-                            if (matchedTerminal) {
+                            // if (matchedTerminal) {
 
-                                const meetingData = {
-                                    url: matchedTerminal.zoom_url,
-                                    uniqueId: matchingResult.uniqueId,
-                                    terminal_id: matchedTerminal.terminal_id
-                                };
+                            const meetingData = {
+                                url: matchedTerminal.zoom_url,
+                                uniqueId: matchingResult.uniqueId,
+                                terminal_id: matchedTerminal.terminal_id
+                            };
 
-                                const adminData = {
-                                    connectingLink: 'calling',
-                                    terminal_id: matchedTerminal.terminal_id,
-                                    uniqueId: matchingResult.uniqueId,
-                                };
+                            const adminData = {
+                                connectingLink: 'calling',
+                                terminal_id: matchedTerminal.terminal_id,
+                                uniqueId: matchingResult.uniqueId,
+                            };
 
-                                // console.log(3177, adminData);
+                            console.log(3177, adminData);
 
-                                io.emit('message', adminData);
+                            io.emit('message', adminData);
 
-                                io.emit('url', meetingData);
-                                io.emit('startUrl', meetingData);
+                            io.emit('url', meetingData);
+                            io.emit('startUrl', meetingData);
 
-                                await updateUserStatus(matchedTerminal.terminal_id, 'inactive')
-
-                                // console.log(1177, userRequests, matchingResult.uniqueId);
-
-                                userRequests = userRequests.filter(item => item.uniqueId !== matchingResult.uniqueId)
-
-                                // console.log(1277, userRequests, matchingResult.uniqueId);
-                            }
-                            else {
-                                matchingResult = "did not find terminal";
-                                // console.log(1146, matchingResult)
-                            }
+                            await updateUserStatus(matchedTerminal.terminal_id, 'inactive')
+                            // console.log(2146, userRequests[i].uniqueId, "found the terminal")
                         }
+                        else {
+                            const adminData = {
+                                connectingLink: 'no active terminal',
+                                uniqueId: userRequests[i].uniqueId,
+                            };
+
+                            // console.log(3177, adminData);
+
+                            io.emit('message', adminData);
+                            // console.log(4146, userRequests[i].uniqueId, "no terminal to find")
+                            // userRequests = userRequests.filter(item => item.uniqueId !== userRequests[i].uniqueId)
+                        }
+
+                        userRequests = userRequests.filter(item => item.uniqueId !== userRequests[i].uniqueId)
+
+                        // userRequests[i].uniqueId
+
                     }
-                } else {
-                    console.log("no user requests")
                 }
             }
 
@@ -135,6 +150,7 @@ const handleWebSocket = () => {
                     if (userRequests.length === 0) {
                         console.log("userRequests.length is zero", userRequests.length);
                     } else {
+                        console.log("userRequests.length is", userRequests.length)
                         // Schedule the next execution after 1 second
                         setTimeout(executeAllRequests, 5000);
                     }
@@ -143,7 +159,6 @@ const handleWebSocket = () => {
                 // Start the first execution
                 executeAllRequests();
             }
-
         });
 
     });
