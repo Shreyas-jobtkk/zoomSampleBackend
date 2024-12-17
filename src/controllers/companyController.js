@@ -69,20 +69,3 @@ export const deleteCompanies = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-// // controllers/companyController.js
-// import { getAllCompanies } from "../models/companyModel.js"; // Import the model function
-
-// function getAllCompaniesController(req, res) {
-//   getAllCompanies()
-//     .then(function (companies) {
-//       res.status(200).json(companies);
-//       console.log(146, companies); // Logging for debugging, you might want to remove in production
-//     })
-//     .catch(function (error) {
-//       console.error("Error fetching companies:", error);
-//       res.status(500).json({ error: "Failed to fetch companies." });
-//     });
-// }
-
-// export { getAllCompaniesController };
