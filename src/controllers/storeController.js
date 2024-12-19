@@ -97,10 +97,29 @@ export const getStoreByIdController = async (req, res) => {
   }
 };
 
+// Handle fetching store_no and store_name by company_no
+export const getStoreDetailsByCompanyController = async (req, res) => {
+  const { companyNo } = req.params; // Extract companyNo from the request params
+
+  try {
+    const storeDetails = await storeModel.getStoreDetailsByCompany(companyNo);
+    if (storeDetails.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No stores found for this company." });
+    }
+    res.status(200).json(storeDetails); // Return the list of store details (store_no and store_name)
+  } catch (err) {
+    console.error("Error fetching store details by company:", err);
+    res.status(500).send("Server error");
+  }
+};
+
 export default {
   createStoreController,
   updateStoreController,
   deleteStoresController,
   getAllStoresController,
   getStoreByIdController,
+  getStoreDetailsByCompanyController,
 };

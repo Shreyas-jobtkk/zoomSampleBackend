@@ -84,6 +84,21 @@ app.get("/api/users", async (req, res) => {
 //   }
 // });
 
+// app.get("/company/names", async (req, res) => {
+//   console.log(122);
+//   try {
+//     const result = await pool.query(
+//       "SELECT company_no, company_name FROM company_info"
+//     );
+//     res.status(200).json(result.rows); // Send response with company data
+//   } catch (error) {
+//     console.error("Error fetching company name details:", error);
+//     res.status(500).json({ message: "Failed to fetch company name details." });
+//   }
+// });
+
+// console.log(1474, companyRoutes);
+
 app.use("/company", companyRoutes);
 
 app.use("/stores", storeRoutes);

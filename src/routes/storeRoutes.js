@@ -9,6 +9,12 @@ router.post("/", storeController.createStoreController);
 // GET /stores: Get all stores
 router.get("/", storeController.getAllStoresController);
 
+// GET /stores/company/:companyNo: Get store details (store_no, store_name) by company ID
+router.get(
+  "/company/:companyNo",
+  storeController.getStoreDetailsByCompanyController
+);
+
 // GET /stores/:storeNo: Get a single store by ID
 router.get("/:storeNo", storeController.getStoreByIdController);
 

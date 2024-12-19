@@ -1,14 +1,5 @@
 import * as companyModel from "../models/companyModel.js";
 
-export const getCompanies = async (req, res) => {
-  try {
-    const companies = await companyModel.getAllCompanies();
-    res.status(200).json(companies);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 export const getCompany = async (req, res) => {
   const { id } = req.params;
   try {
@@ -67,5 +58,26 @@ export const deleteCompanies = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const getCompanies = async (req, res) => {
+  console.log(31422);
+  try {
+    const companies = await companyModel.getAllCompanies();
+    res.status(200).json(companies);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getCompanyNames = async (req, res) => {
+  console.log(133);
+  try {
+    const companies = await companyModel.getCompanyNumbersAndNames();
+    res.status(200).json(companies);
+  } catch (error) {
+    console.error("Error fetching companies:", error); // Log the error for debugging
+    res.status(500).json({ message: "Failed to fetch company name details." });
   }
 };

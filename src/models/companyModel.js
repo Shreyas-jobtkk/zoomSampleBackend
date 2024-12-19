@@ -15,15 +15,6 @@ export const createCompany = async (companyData) => {
   }
 };
 
-export const getAllCompanies = async () => {
-  try {
-    const result = await pool.query("SELECT * FROM company_info");
-    return result.rows;
-  } catch (err) {
-    throw new Error("Failed to fetch companies.");
-  }
-};
-
 export const getCompanyById = async (id) => {
   try {
     const result = await pool.query(
@@ -59,5 +50,26 @@ export const deleteCompanies = async (ids) => {
     return result.rows;
   } catch (err) {
     throw new Error("Failed to delete companies.");
+  }
+};
+
+export const getAllCompanies = async () => {
+  try {
+    const result = await pool.query("SELECT * FROM company_info");
+    return result.rows;
+  } catch (err) {
+    throw new Error("Failed to fetch companies.");
+  }
+};
+
+export const getCompanyNumbersAndNames = async () => {
+  try {
+    const result = await pool.query(
+      "SELECT company_no, company_name FROM company_info"
+    );
+    return result.rows; // Make sure this returns data as expected
+  } catch (err) {
+    console.error("Error fetching company numbers and names:", err);
+    throw new Error("Failed to fetch company numbers and names.");
   }
 };

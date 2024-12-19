@@ -75,3 +75,13 @@ export const deleteLanguages = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Get only language_name and languages_support_no
+export const getLanguageNames = async (req, res) => {
+  try {
+    const languages = await languagesModel.getLanguageNames();
+    res.status(200).json(languages);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

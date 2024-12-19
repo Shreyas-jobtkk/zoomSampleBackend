@@ -70,3 +70,15 @@ export const deleteLanguages = async (ids) => {
     throw new Error("Failed to delete languages.");
   }
 };
+
+// Fetch only language_name and languages_support_no
+export const getLanguageNames = async () => {
+  try {
+    const result = await pool.query(
+      "SELECT language_name, languages_support_no FROM languages_support_info WHERE language_deleted = false"
+    );
+    return result.rows;
+  } catch (err) {
+    throw new Error("Failed to fetch language names.");
+  }
+};

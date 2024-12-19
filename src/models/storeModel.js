@@ -152,10 +152,28 @@ export const deleteStores = async (storeNos) => {
   }
 };
 
+// Get store_no and store_name by company_no
+export const getStoreDetailsByCompany = async (companyNo) => {
+  const query = `
+    SELECT store_no, store_name
+    FROM store_info
+    WHERE company_no = $1 AND store_delete = false
+  `;
+
+  try {
+    const result = await pool.query(query, [companyNo]);
+    console.log(144, result.rows);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Failed to fetch store details by company ID.");
+  }
+};
+
 export default {
   createStore,
   getAllStores,
   getStoreById,
   updateStore,
   deleteStores,
+  getStoreDetailsByCompany,
 };
