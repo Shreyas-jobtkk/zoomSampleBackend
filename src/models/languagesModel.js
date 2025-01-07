@@ -27,6 +27,24 @@ export const getAllLanguages = async () => {
   }
 };
 
+// Get multiple language names (furigana) by an array of IDs
+export const getLanguagesById = async (ids) => {
+  try {
+    const result = await pool.query(
+      `SELECT language_name_furigana, languages_support_no
+       FROM languages_support_info 
+       WHERE languages_support_no = ANY($1::int[])`,
+      [ids]
+    );
+    return result.rows.map((row) => ({
+      language_name_furigana: row.language_name_furigana,
+      languages_support_no: row.languages_support_no,
+    }));
+  } catch (err) {
+    throw new Error("Failed to fetch language names.");
+  }
+};
+
 // Get a language by ID
 export const getLanguageById = async (id) => {
   try {

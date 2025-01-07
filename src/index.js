@@ -12,6 +12,7 @@ import pool from "./db.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import storeRoutes from "./routes/storeRoutes.js";
 import languagesRoutes from "./routes/languagesRoutes.js";
+import userRoutes from "./routes/userRouter.js";
 
 // Test the database connection
 pool.connect((err) => {
@@ -65,45 +66,13 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
-// Handling POST request to insert company data
-// app.post("/company", async (req, res) => {
-//   const { company_name, company_name_furigana, note } = req.body;
-
-//   try {
-//     // Insert company info with +9 hours to the current timestamp and default 'deleted' as false
-//     const result = await pool.query(
-//       `INSERT INTO company_info (company_name, company_name_furigana, company_note, created_at, updated_at, company_deleted)
-//       VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false)`,
-//       [company_name, company_name_furigana, note]
-//     );
-//     console.log("Company added successfully");
-//     res.status(201).json({ message: "Company added successfully" });
-//   } catch (error) {
-//     console.error("Error inserting company:", error);
-//     res.status(500).json({ error: "Failed to insert company." });
-//   }
-// });
-
-// app.get("/company/names", async (req, res) => {
-//   console.log(122);
-//   try {
-//     const result = await pool.query(
-//       "SELECT company_no, company_name FROM company_info"
-//     );
-//     res.status(200).json(result.rows); // Send response with company data
-//   } catch (error) {
-//     console.error("Error fetching company name details:", error);
-//     res.status(500).json({ message: "Failed to fetch company name details." });
-//   }
-// });
-
-// console.log(1474, companyRoutes);
-
 app.use("/company", companyRoutes);
 
 app.use("/stores", storeRoutes);
 
 app.use("/languages", languagesRoutes);
+
+app.use("/user", userRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

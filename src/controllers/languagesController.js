@@ -2,9 +2,27 @@
 import * as languagesModel from "../models/languagesModel.js";
 
 // Get all languages
-export const getLanguages = async (req, res) => {
+export const getAllLanguages = async (req, res) => {
   try {
     const languages = await languagesModel.getAllLanguages();
+    res.status(200).json(languages);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get multiple languages by IDs
+export const getLanguagesById = async (req, res) => {
+  const { ids } = req.body; // Expecting an array of IDs in the request body
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ message: "Invalid or missing IDs array" });
+  }
+
+  try {
+    const languages = await languagesModel.getLanguagesById(ids);
+    if (languages.length === 0) {
+      return res.status(404).json({ message: "No languages found" });
+    }
     res.status(200).json(languages);
   } catch (error) {
     res.status(500).json({ message: error.message });
