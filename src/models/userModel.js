@@ -161,7 +161,7 @@ export const deleteUsers = async (ids) => {
   }
 };
 
-export const getAllUsers = async () => {
+export const getAllInterpreters = async () => {
   const query = `
     SELECT 
       user_info.*, 
@@ -178,6 +178,70 @@ export const getAllUsers = async () => {
       company_info
     ON 
       store_info.company_no = company_info.company_no
+    WHERE 
+      user_info.user_type = 'interpreter'
+    ORDER BY 
+      user_info.store_no;
+  `;
+
+  try {
+    const result = await pool.query(query);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Failed to fetch users.");
+  }
+};
+
+export const getAllContractors = async () => {
+  const query = `
+    SELECT 
+      user_info.*, 
+      store_info.store_name,
+      store_info.company_no,
+      company_info.company_name
+    FROM 
+      user_info
+    JOIN 
+      store_info
+    ON 
+      user_info.store_no = store_info.store_no
+    JOIN 
+      company_info
+    ON 
+      store_info.company_no = company_info.company_no
+    WHERE 
+      user_info.user_type = 'contractor'
+    ORDER BY 
+      user_info.store_no;
+  `;
+
+  try {
+    const result = await pool.query(query);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Failed to fetch users.");
+  }
+};
+
+export const getAllAdministrators = async () => {
+  const query = `
+    SELECT 
+      user_info.*, 
+      store_info.store_name,
+      store_info.company_no,
+      company_info.company_name
+    FROM 
+      user_info
+    JOIN 
+      store_info
+    ON 
+      user_info.store_no = store_info.store_no
+    JOIN 
+      company_info
+    ON 
+      store_info.company_no = company_info.company_no
+    WHERE 
+      user_info.user_type = 'administrator'
     ORDER BY 
       user_info.store_no;
   `;

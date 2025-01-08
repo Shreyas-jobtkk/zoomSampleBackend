@@ -132,9 +132,27 @@ export const deleteUsers = async (req, res) => {
   }
 };
 
-export const getUsers = async (req, res) => {
+export const getAllInterpreters = async (req, res) => {
   try {
-    const users = await userModel.getAllUsers();
+    const users = await userModel.getAllInterpreters();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAllContractors = async (req, res) => {
+  try {
+    const users = await userModel.getAllContractors();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAllAdministrators = async (req, res) => {
+  try {
+    const users = await userModel.getAllAdministrators();
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
