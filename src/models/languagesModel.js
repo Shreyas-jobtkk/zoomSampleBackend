@@ -93,7 +93,7 @@ export const deleteLanguages = async (ids) => {
 export const getLanguageNames = async () => {
   try {
     const result = await pool.query(
-      "SELECT language_name, languages_support_no FROM languages_support_info WHERE language_deleted = false"
+      "SELECT language_name_furigana, languages_support_no FROM languages_support_info"
     );
     return result.rows;
   } catch (err) {
