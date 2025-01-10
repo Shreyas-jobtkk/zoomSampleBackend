@@ -223,6 +223,84 @@ export const getAllContractors = async () => {
   }
 };
 
+export const getContractorsAuth = async (mail_address) => {
+  console.log("Checking credentials in the database...");
+
+  try {
+    // Query to get the user with the matching email address
+    const result = await pool.query(
+      `SELECT mail_address, user_password FROM user_info WHERE user_type = 'contractor' AND mail_address = $1`,
+      [mail_address]
+    );
+
+    // If no user is found
+    if (result.rows.length === 0) {
+      console.log("invalid credentials:");
+      return [];
+    }
+
+    console.log("valid credentials:");
+
+    // Return the user data (assuming the result only returns one user)
+    return result.rows;
+  } catch (error) {
+    console.error("Database error:", error.message);
+    throw new Error("Failed to fetch contractor credentials.");
+  }
+};
+
+export const getInterpretersAuth = async (mail_address) => {
+  console.log("Checking credentials in the database...");
+
+  try {
+    // Query to get the user with the matching email address
+    const result = await pool.query(
+      `SELECT mail_address, user_password FROM user_info WHERE user_type = 'interpreter' AND mail_address = $1`,
+      [mail_address]
+    );
+
+    // If no user is found
+    if (result.rows.length === 0) {
+      console.log("invalid credentials:");
+      return [];
+    }
+
+    console.log("valid credentials:");
+
+    // Return the user data (assuming the result only returns one user)
+    return result.rows;
+  } catch (error) {
+    console.error("Database error:", error.message);
+    throw new Error("Failed to fetch contractor credentials.");
+  }
+};
+
+export const getAdministratorsAuth = async (mail_address) => {
+  console.log("Checking credentials in the database...");
+
+  try {
+    // Query to get the user with the matching email address
+    const result = await pool.query(
+      `SELECT mail_address, user_password FROM user_info WHERE user_type = 'administrator' AND mail_address = $1`,
+      [mail_address]
+    );
+
+    // If no user is found
+    if (result.rows.length === 0) {
+      console.log("invalid credentials:");
+      return [];
+    }
+
+    console.log("valid credentials:");
+
+    // Return the user data (assuming the result only returns one user)
+    return result.rows;
+  } catch (error) {
+    console.error("Database error:", error.message);
+    throw new Error("Failed to fetch contractor credentials.");
+  }
+};
+
 export const getAllAdministrators = async () => {
   const query = `
     SELECT 

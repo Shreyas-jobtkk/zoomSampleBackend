@@ -1,6 +1,6 @@
 import { io } from "./index.js";
-import { getTerminalDetails } from "./routes/fetchTerminals.js";
-import { updateUserStatus } from "./routes/updateTerminal.js";
+// import { getTerminalDetails } from "./routes/fetchTerminals.js";
+// import { updateUserStatus } from "./routes/updateTerminal.js";
 
 const handleWebSocket = () => {
   let userRequests = [];
@@ -69,7 +69,7 @@ const handleWebSocket = () => {
         // Loop through the data array
         if (userRequests.length > 0) {
           for (let i = 0; i < userRequests.length; i++) {
-            let terminalData = await getTerminalDetails();
+            // let terminalData = await getTerminalDetails();
 
             // console.log(1144, terminalData)
 
@@ -124,7 +124,7 @@ const handleWebSocket = () => {
               io.emit("url", meetingData);
               io.emit("startUrl", meetingData);
 
-              await updateUserStatus(matchedTerminal.terminal_id, "inactive");
+              // await updateUserStatus(matchedTerminal.terminal_id, "inactive");
               // console.log(2146, userRequests[i].uniqueId, "found the terminal")
             } else {
               const adminData = {

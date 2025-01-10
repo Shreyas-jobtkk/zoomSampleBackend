@@ -1,4 +1,5 @@
 import * as userModel from "../models/userModel.js";
+// import bcrypt from "bcrypt";
 
 export const getUserById = async (req, res) => {
   const { id } = req.params;
@@ -33,6 +34,9 @@ export const createUser = async (req, res) => {
     meeting_passcode,
     user_note,
   } = req.body;
+
+  // Hash the password before saving it
+  // const hashedPassword = await bcrypt.hash(user_password, 10);
 
   try {
     // Ensure translate_languages is an array of integers
@@ -88,6 +92,9 @@ export const updateUser = async (req, res) => {
     user_note,
     store_no,
   } = req.body;
+
+  // Hash the password before saving it
+  // const hashedPassword = await bcrypt.hash(user_password, 10);
 
   try {
     const user = await userModel.updateUser(id, {
@@ -147,6 +154,137 @@ export const getAllContractors = async (req, res) => {
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const getContractorsAuth = async (req, res) => {
+  const { mail_address, user_password } = req.body;
+  console.log("Received credentials:", { mail_address, user_password });
+
+  try {
+    // Fetch the user from the database by email address
+    const users = await userModel.getContractorsAuth(mail_address);
+
+    console.log("valid credentials:", users);
+
+    // Check if the user exists
+    if (users.length === 0) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
+    }
+
+    // Retrieve the first user (assuming unique mail_address)
+    const user = users[0];
+    const isPasswordValid = user_password === user.user_password;
+
+    if (!isPasswordValid) {
+      console.log(456, "failed");
+
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
+    }
+
+    // If the password is valid, return user details (do not send token)
+    res.status(200).json({
+      success: true,
+      message: "valid credentials.",
+      mail: mail_address,
+    });
+  } catch (error) {
+    console.error("Controller error:", error.message);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to authenticate user." });
+  }
+};
+
+export const getInterpretersAuth = async (req, res) => {
+  console.log(156667, req.body);
+  const { mail_address, user_password } = req.body;
+  console.log("Received credentials:", { mail_address, user_password });
+
+  try {
+    // Fetch the user from the database by email address
+    const users = await userModel.getInterpretersAuth(mail_address);
+
+    console.log("valid credentials:", users);
+
+    // Check if the user exists
+    if (users.length === 0) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
+    }
+
+    // Retrieve the first user (assuming unique mail_address)
+    const user = users[0];
+    const isPasswordValid = user_password === user.user_password;
+
+    if (!isPasswordValid) {
+      console.log(456, "failed");
+
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
+    }
+
+    // If the password is valid, return user details (do not send token)
+    res.status(200).json({
+      success: true,
+      message: "valid credentials.",
+      mail: mail_address,
+    });
+  } catch (error) {
+    console.error("Controller error:", error.message);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to authenticate user." });
+  }
+};
+
+export const getAdministratorsAuth = async (req, res) => {
+  console.log(156667, req.body);
+  const { mail_address, user_password } = req.body;
+  console.log("Received credentials:", { mail_address, user_password });
+
+  try {
+    // Fetch the user from the database by email address
+    const users = await userModel.getAdministratorsAuth(mail_address);
+
+    console.log("valid credentials:", users);
+
+    // Check if the user exists
+    if (users.length === 0) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
+    }
+
+    // Retrieve the first user (assuming unique mail_address)
+    const user = users[0];
+    const isPasswordValid = user_password === user.user_password;
+
+    if (!isPasswordValid) {
+      console.log(456, "failed");
+
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
+    }
+
+    // If the password is valid, return user details (do not send token)
+    res.status(200).json({
+      success: true,
+      message: "valid credentials.",
+      mail: mail_address,
+    });
+  } catch (error) {
+    console.error("Controller error:", error.message);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to authenticate user." });
   }
 };
 
