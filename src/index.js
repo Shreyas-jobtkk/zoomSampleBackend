@@ -60,9 +60,9 @@ const io = new Server(server, {
 // Use CORS middleware to enable cross-origin requests
 app.use(
   cors({
-    origin: true, // Your frontend's origin
-    methods: ["GET", "POST"],
-    credentials: true,
+    origin: "http://japanesebridge.com", // Replace with your frontend's origin
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // If cookies or authentication headers are needed
   })
 );
 
