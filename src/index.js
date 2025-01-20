@@ -1,9 +1,6 @@
 import express from "express";
 import { Server } from "socket.io";
 import cors from "cors"; // Import cors
-// import { getTerminalDetails } from "./routes/fetchTerminals.js";
-// import { getUserDetails } from "./routes/fetchUsers.js";
-// import { updateUserStatus } from "./routes/updateTerminal.js";
 import http from "http";
 import { handleWebSocket } from "./handleWebSocket.js";
 import signature from "./signature.js";
@@ -41,11 +38,8 @@ app.use("/", signature);
 // });
 
 app.use("/company", companyRoutes);
-
 app.use("/stores", storeRoutes);
-
 app.use("/languages", languagesRoutes);
-
 app.use("/user", userRoutes);
 
 const server = http.createServer(app);
@@ -60,7 +54,7 @@ const io = new Server(server, {
 // Use CORS middleware to enable cross-origin requests
 app.use(
   cors({
-    origin: "http://japanesebridge.com", // Replace with your frontend's origin
+    origin: "http://localhost:4000", // Replace with your frontend's origin
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // If cookies or authentication headers are needed
   })

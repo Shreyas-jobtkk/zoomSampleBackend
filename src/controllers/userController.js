@@ -74,8 +74,35 @@ export const createUser = async (req, res) => {
   }
 };
 
+// Controller Function
+export const updateInterpretersStatus = async (req, res) => {
+  const mail_id = req.params.mail; // Assuming 'mail_id' is passed as a URL parameter
+  const { interpreter_status } = req.body; // Assuming 'interpreter_status' is part of the body
+
+  console.log(1447, mail_id, interpreter_status);
+  if (!mail_id || !interpreter_status) {
+    return res.status(400).json({ message: "Invalid request data" });
+  }
+
+  try {
+    // Call the model function with id and status
+    const user = await userModel.updateInterpretersStatus(
+      mail_id,
+      interpreter_status
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating interpreter status:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const updateUser = async (req, res) => {
-  console.log(144, req.body);
   const { id } = req.params;
   const {
     user_name_last,

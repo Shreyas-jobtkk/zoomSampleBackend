@@ -149,6 +149,28 @@ export const updateUser = async (id, userData) => {
   }
 };
 
+export const updateInterpretersStatus = async (mail_id, interpreter_status) => {
+  console.log(2155, mail_id, interpreter_status);
+  try {
+    const result = await pool.query(
+      `UPDATE user_info SET 
+        user_status = $1 
+      WHERE mail_address = $2 
+      RETURNING *`,
+      [interpreter_status, mail_id]
+    );
+
+    if (result.rows.length === 0) {
+      return null; // No user found with the given ID
+    }
+
+    return result.rows[0];
+  } catch (err) {
+    console.error("Database error:", err.message, err.stack);
+    throw new Error("Failed to update user.");
+  }
+};
+
 export const deleteUsers = async (ids) => {
   try {
     const result = await pool.query(
