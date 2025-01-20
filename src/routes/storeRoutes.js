@@ -1,5 +1,5 @@
 import express from "express"; // Import express
-import * as storeController from "../controllers/storeController.js"; // Import all store controllers
+import * as storeController from "../controllers/storeController"; // Import all store controllers
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ router.get(
 );
 
 // GET /stores/:storeNo: Get a single store by ID
-router.get("/:storeNo", storeController.getStoreByIdController);
+router.get("/:storeNo", storeController.getStoreByStoreNoController);
 
 // PUT /stores/:storeNo: Update an existing store by ID
 router.put("/:storeNo", storeController.updateStoreController);

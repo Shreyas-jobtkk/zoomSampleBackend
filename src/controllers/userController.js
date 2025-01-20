@@ -15,7 +15,7 @@ export const getUserById = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-  console.log(1256, req.body);
+  // console.log(1256, req.body);
 
   const {
     store_no,
@@ -79,7 +79,7 @@ export const updateInterpretersStatus = async (req, res) => {
   const mail_id = req.params.mail; // Assuming 'mail_id' is passed as a URL parameter
   const { interpreter_status } = req.body; // Assuming 'interpreter_status' is part of the body
 
-  console.log(1447, mail_id, interpreter_status);
+  // console.log(1447, mail_id, interpreter_status);
   if (!mail_id || !interpreter_status) {
     return res.status(400).json({ message: "Invalid request data" });
   }
@@ -186,13 +186,13 @@ export const getAllContractors = async (req, res) => {
 
 export const getContractorsAuth = async (req, res) => {
   const { mail_address, user_password } = req.body;
-  console.log("Received credentials:", { mail_address, user_password });
+  // console.log("Received credentials:", { mail_address, user_password });
 
   try {
     // Fetch the user from the database by email address
     const users = await userModel.getContractorsAuth(mail_address);
 
-    console.log("valid credentials:", users);
+    // console.log("valid credentials:", users);
 
     // Check if the user exists
     if (users.length === 0) {
@@ -206,7 +206,7 @@ export const getContractorsAuth = async (req, res) => {
     const isPasswordValid = user_password === user.user_password;
 
     if (!isPasswordValid) {
-      console.log(456, "failed");
+      // console.log(456, "failed");
 
       return res
         .status(401)
@@ -228,15 +228,15 @@ export const getContractorsAuth = async (req, res) => {
 };
 
 export const getInterpretersAuth = async (req, res) => {
-  console.log(156667, req.body);
+  // console.log(156667, req.body);
   const { mail_address, user_password } = req.body;
-  console.log("Received credentials:", { mail_address, user_password });
+  // console.log("Received credentials:", { mail_address, user_password });
 
   try {
     // Fetch the user from the database by email address
     const users = await userModel.getInterpretersAuth(mail_address);
 
-    console.log("valid credentials:", users);
+    // console.log("valid credentials:", users);
 
     // Check if the user exists
     if (users.length === 0) {
@@ -250,7 +250,7 @@ export const getInterpretersAuth = async (req, res) => {
     const isPasswordValid = user_password === user.user_password;
 
     if (!isPasswordValid) {
-      console.log(456, "failed");
+      // console.log(456, "failed");
 
       return res
         .status(401)
@@ -272,15 +272,15 @@ export const getInterpretersAuth = async (req, res) => {
 };
 
 export const getAdministratorsAuth = async (req, res) => {
-  console.log(156667, req.body);
+  // console.log(156667, req.body);
   const { mail_address, user_password } = req.body;
-  console.log("Received credentials:", { mail_address, user_password });
+  // console.log("Received credentials:", { mail_address, user_password });
 
   try {
     // Fetch the user from the database by email address
     const users = await userModel.getAdministratorsAuth(mail_address);
 
-    console.log("valid credentials:", users);
+    // console.log("valid credentials:", users);
 
     // Check if the user exists
     if (users.length === 0) {
@@ -294,7 +294,7 @@ export const getAdministratorsAuth = async (req, res) => {
     const isPasswordValid = user_password === user.user_password;
 
     if (!isPasswordValid) {
-      console.log(456, "failed");
+      // console.log(456, "failed");
 
       return res
         .status(401)

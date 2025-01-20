@@ -8,6 +8,7 @@ interface CompanyData {
 }
 
 export const createCompany = async (companyData: CompanyData) => {
+  console.log(157, companyData);
   const { company_name, company_name_furigana, company_note } = companyData;
   try {
     const result = await pool.query(

@@ -53,7 +53,7 @@ router.post("/", (req, res) => {
   const exp = expirationSeconds ? iat + expirationSeconds : iat + 60 * 60 * 2;
   const oHeader = { alg: "HS256", typ: "JWT" };
 
-  // console.log(447,process.env.DATABASE_URL)
+  // // console.log(447,process.env.DATABASE_URL)
 
   const oPayload = {
     appKey: process.env.ZOOM_MEETING_SDK_KEY,

@@ -20,7 +20,7 @@ export const createUser = async (userData) => {
   } = userData;
 
   try {
-    console.log(21445, userData);
+    // console.log(21445, userData);
     // Ensure translate_languages is an array of integers
     const translatedLanguages = Array.isArray(translate_languages)
       ? translate_languages
@@ -112,7 +112,7 @@ export const updateUser = async (id, userData) => {
       ? translate_languages
       : [];
 
-    console.log(1445, id, userData);
+    // console.log(1445, id, userData);
 
     const result = await pool.query(
       `UPDATE user_info SET
@@ -141,7 +141,7 @@ export const updateUser = async (id, userData) => {
       ]
     );
 
-    console.log(21445, result.rows[0]);
+    // console.log(21445, result.rows[0]);
     return result.rows[0];
   } catch (err) {
     console.error("Database error:", err.message, err.stack);
@@ -150,7 +150,7 @@ export const updateUser = async (id, userData) => {
 };
 
 export const updateInterpretersStatus = async (mail_id, interpreter_status) => {
-  console.log(2155, mail_id, interpreter_status);
+  // console.log(2155, mail_id, interpreter_status);
   try {
     const result = await pool.query(
       `UPDATE user_info SET 
@@ -246,7 +246,7 @@ export const getAllContractors = async () => {
 };
 
 export const getContractorsAuth = async (mail_address) => {
-  console.log("Checking credentials in the database...");
+  // console.log("Checking credentials in the database...");
 
   try {
     // Query to get the user with the matching email address
@@ -257,11 +257,11 @@ export const getContractorsAuth = async (mail_address) => {
 
     // If no user is found
     if (result.rows.length === 0) {
-      console.log("invalid credentials:");
+      // console.log("invalid credentials:");
       return [];
     }
 
-    console.log("valid credentials:");
+    // console.log("valid credentials:");
 
     // Return the user data (assuming the result only returns one user)
     return result.rows;
@@ -272,7 +272,7 @@ export const getContractorsAuth = async (mail_address) => {
 };
 
 export const getInterpretersAuth = async (mail_address) => {
-  console.log("Checking credentials in the database...");
+  // console.log("Checking credentials in the database...");
 
   try {
     // Query to get the user with the matching email address
@@ -283,11 +283,11 @@ export const getInterpretersAuth = async (mail_address) => {
 
     // If no user is found
     if (result.rows.length === 0) {
-      console.log("invalid credentials:");
+      // console.log("invalid credentials:");
       return [];
     }
 
-    console.log("valid credentials:");
+    // console.log("valid credentials:");
 
     // Return the user data (assuming the result only returns one user)
     return result.rows;
@@ -298,7 +298,7 @@ export const getInterpretersAuth = async (mail_address) => {
 };
 
 export const getAdministratorsAuth = async (mail_address) => {
-  console.log("Checking credentials in the database...");
+  // console.log("Checking credentials in the database...");
 
   try {
     // Query to get the user with the matching email address
@@ -309,11 +309,11 @@ export const getAdministratorsAuth = async (mail_address) => {
 
     // If no user is found
     if (result.rows.length === 0) {
-      console.log("invalid credentials:");
+      // console.log("invalid credentials:");
       return [];
     }
 
-    console.log("valid credentials:");
+    // console.log("valid credentials:");
 
     // Return the user data (assuming the result only returns one user)
     return result.rows;

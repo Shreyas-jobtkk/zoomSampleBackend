@@ -15,7 +15,7 @@ pool.connect((err: any) => {
   if (err) {
     console.error("Error connecting to the database:", err.stack);
   } else {
-    console.log("Connected to the PostgreSQL database");
+    // console.log("Connected to the PostgreSQL database");
   }
 });
 
@@ -68,5 +68,5 @@ export { app, io };
 
 // Start the server
 server.listen(port, () => {
-  // console.log(`Server listening on port ${port}`);
+  // // console.log(`Server listening on port ${port}`);
 });

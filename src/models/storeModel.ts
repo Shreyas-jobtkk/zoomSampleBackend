@@ -1,7 +1,43 @@
-import pool from "../db.js"; // Import the database connection pool
+import pool from "../db"; // Import the database connection pool
+
+// Type definition for store data
+interface StoreData {
+  company_no: string;
+  store_name: string;
+  store_name_furigana: string;
+  zip: string;
+  pref: string;
+  city: string;
+  street: string;
+  building_name: string;
+  tel: string;
+  fax: string;
+  store_note: string;
+}
+
+// Type definition for store details
+interface StoreDetails {
+  store_no: number;
+  company_no: number;
+  store_name: string;
+  store_name_furigana: string;
+  zip: string;
+  pref: string;
+  city: string;
+  street: string;
+  building_name: string;
+  tel: string;
+  fax: string;
+  store_note: string;
+  created_at: string;
+  updated_at: string;
+  store_delete: boolean;
+}
 
 // Insert a new store
-export const createStore = async (storeData) => {
+export const createStore = async (
+  storeData: StoreData
+): Promise<StoreDetails> => {
   const {
     company_no,
     store_name,
@@ -45,8 +81,77 @@ export const createStore = async (storeData) => {
   }
 };
 
+// Update an existing store
+export const updateStore = async (
+  storeNo: number,
+  storeData: StoreData
+): Promise<StoreDetails | null> => {
+  const {
+    company_no,
+    store_name,
+    store_name_furigana,
+    zip,
+    pref,
+    city,
+    street,
+    building_name,
+    tel,
+    fax,
+    store_note,
+  } = storeData;
+
+  // console.log(1444, storeData, storeNo);
+
+  try {
+    const result = await pool.query(
+      "UPDATE store_info SET company_no = $1, store_name = $2, store_name_furigana = $3, zip = $4, pref = $5, city = $6, street = $7, building_name = $8, tel = $9, fax = $10, store_note = $11, updated_at = CURRENT_TIMESTAMP WHERE store_no = $12 RETURNING *",
+      [
+        Number(company_no),
+        store_name,
+        store_name_furigana,
+        zip,
+        pref,
+        city,
+        street,
+        building_name,
+        tel,
+        fax,
+        store_note,
+        storeNo,
+      ]
+    );
+    return result.rows[0] || null;
+  } catch (err) {
+    throw new Error("Failed to update store.");
+  }
+};
+
+// Soft delete a store
+export const deleteStores = async (
+  storeNos: number[]
+): Promise<StoreDetails[]> => {
+  const query = `
+      UPDATE store_info
+      SET 
+        store_delete = true, 
+        updated_at = CURRENT_TIMESTAMP
+      WHERE 
+        store_no = ANY($1::int[]) 
+      RETURNING *
+    `;
+
+  const values = [storeNos];
+
+  try {
+    const result = await pool.query(query, values);
+    return result.rows; // Return all the deleted stores
+  } catch (err) {
+    throw new Error("Failed to delete stores.");
+  }
+};
+
 // Get all stores (excluding soft-deleted ones)
-export const getAllStores = async () => {
+export const getAllStores = async (): Promise<StoreDetails[]> => {
   const query = `
     SELECT 
       store_info.*, 
@@ -70,7 +175,10 @@ export const getAllStores = async () => {
 };
 
 // Get a single store by ID
-export const getStoreById = async (storeNo) => {
+export const getStoreByStoreNo = async (
+  storeNo: number
+): Promise<StoreDetails | null> => {
+  // console.log(889, storeNo);
   try {
     const result = await pool.query(
       `SELECT store_info.*, company_info.company_name 
@@ -80,80 +188,17 @@ export const getStoreById = async (storeNo) => {
       [storeNo]
     );
 
-    return result.rows[0];
+    return result.rows[0] || null;
   } catch (err) {
-    // Log the full error object to understand what's going wrong
     console.error("Database error:", err);
     throw new Error("Failed to fetch store.");
   }
 };
 
-// Update an existing store
-export const updateStore = async (storeNo, storeData) => {
-  const {
-    company_no,
-    store_name,
-    store_name_furigana,
-    zip,
-    pref,
-    city,
-    street,
-    building_name,
-    tel,
-    fax,
-    store_note,
-  } = storeData;
-
-  try {
-    const result = await pool.query(
-      "UPDATE store_info SET company_no = $1, store_name = $2, store_name_furigana = $3, zip = $4, pref = $5, city = $6, street = $7, building_name = $8, tel = $9, fax = $10, store_note = $11, updated_at = CURRENT_TIMESTAMP WHERE store_no = $12 RETURNING *",
-      [
-        company_no,
-        store_name,
-        store_name_furigana,
-        zip,
-        pref,
-        city,
-        street,
-        building_name,
-        tel,
-        fax,
-        store_note,
-        storeNo,
-      ]
-    );
-    console.log(1555555, storeNo, result.rows[0]);
-    return result.rows[0];
-  } catch (err) {
-    throw new Error("Failed to update store.");
-  }
-};
-
-// Soft delete a store
-export const deleteStores = async (storeNos) => {
-  console.log(144, storeNos);
-  const query = `
-      UPDATE store_info
-      SET 
-        store_delete = true, 
-        updated_at = CURRENT_TIMESTAMP
-      WHERE 
-        store_no = ANY($1::int[]) 
-      RETURNING *
-    `;
-
-  const values = [storeNos];
-
-  try {
-    const result = await pool.query(query, values);
-    return result.rows; // Return all the deleted stores
-  } catch (err) {
-    throw new Error("Failed to delete stores.");
-  }
-};
-
 // Get store_no and store_name by company_no
-export const getStoreDetailsByCompany = async (companyNo) => {
+export const getStoreDetailsByCompany = async (
+  companyNo: number
+): Promise<{ store_no: number; store_name: string }[]> => {
   const query = `
     SELECT store_no, store_name
     FROM store_info
@@ -162,7 +207,6 @@ export const getStoreDetailsByCompany = async (companyNo) => {
 
   try {
     const result = await pool.query(query, [companyNo]);
-    console.log(144, result.rows);
     return result.rows;
   } catch (err) {
     throw new Error("Failed to fetch store details by company ID.");
@@ -172,7 +216,7 @@ export const getStoreDetailsByCompany = async (companyNo) => {
 export default {
   createStore,
   getAllStores,
-  getStoreById,
+  getStoreByStoreNo,
   updateStore,
   deleteStores,
   getStoreDetailsByCompany,
