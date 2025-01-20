@@ -3,11 +3,11 @@
   "name": "meetingsdk-auth-endpoint-sample",
   "version": "2.11.0",
   "description": "Generate a Meeting SDK JWT to join Zoom meetings and webinars with the Meeting SDK.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "format": "prettier --write src/*.js",
     "prepare": "husky install",
-    "start": "nodemon src/index.js"
+    "start": "nodemon --watch src --exec tsx src/index.ts"
   },
   "author": "Zoom Video Communications, Inc.",
   "contributors": [
@@ -34,9 +34,14 @@
     "socket.io": "^4.8.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.7",
+    "concurrently": "^9.1.2",
     "husky": "^8.0.0",
-    "nodemon": "^3.1.7",
-    "prettier": "^3.1.1"
+    "nodemon": "^3.1.9",
+    "prettier": "^3.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
   },
   "keywords": []
 }
