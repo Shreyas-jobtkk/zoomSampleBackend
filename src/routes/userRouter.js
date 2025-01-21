@@ -12,9 +12,9 @@ router.post("/interpreter/auth", userController.getInterpretersAuth); // Get all
 router.put("/interpreter/:mail", userController.updateInterpretersStatus); // Get all interpreters
 router.post("/administrator/auth", userController.getAdministratorsAuth); // Get all interpreters
 router.get("/administrator", userController.getAllAdministrators); // Get all interpreters
-router.get("/:id", userController.getUserById); // Get a single user by ID
+router.get("/:userNo", userController.getUserById); // Get a single user by ID
 router.post("/", userController.createUser); // Create a new user
-router.put("/:id", userController.updateUser); // Update a user
+router.put("/:userNo", userController.updateUser); // Update a user
 router.delete("/", userController.deleteUsers); // Delete users
 
 export default router;

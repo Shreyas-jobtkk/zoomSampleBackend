@@ -1,6 +1,61 @@
 import pool from "../db.js";
 
-export const createUser = async (userData) => {
+interface UserData {
+  store_no: string;
+  user_name_last: string;
+  user_name_last_furigana: string;
+  user_name_first: string;
+  user_name_first_furigana: string;
+  user_type: string;
+  mail_address: string;
+  tel: string;
+  tel_extension: string;
+  translate_languages: number[];
+  password_expire: Date;
+  user_password: string;
+  meeting_id: string;
+  meeting_passcode: string;
+  user_note: string;
+}
+
+interface UpdateUserData {
+  user_name_last: string;
+  user_name_last_furigana: string;
+  user_name_first: string;
+  user_name_first_furigana: string;
+  mail_address: string;
+  tel: string;
+  tel_extension: string;
+  translate_languages: number[];
+  user_password: string;
+  meeting_id: string;
+  meeting_passcode: string;
+  user_note: string;
+  store_no: string;
+}
+
+interface User {
+  user_no: number;
+  store_no: number;
+  user_name_last: string;
+  user_name_last_furigana: string;
+  user_name_first: string;
+  user_name_first_furigana: string;
+  user_type: string;
+  mail_address: string;
+  tel: string;
+  tel_extension: string;
+  translate_languages: number[];
+  password_expire: Date;
+  user_password: string;
+  meeting_id: string;
+  meeting_passcode: string;
+  user_note: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export const createUser = async (userData: UserData): Promise<User> => {
   const {
     store_no,
     user_name_last,
@@ -20,8 +75,6 @@ export const createUser = async (userData) => {
   } = userData;
 
   try {
-    // console.log(21445, userData);
-    // Ensure translate_languages is an array of integers
     const translatedLanguages = Array.isArray(translate_languages)
       ? translate_languages
       : [];
@@ -36,7 +89,7 @@ export const createUser = async (userData) => {
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
         RETURNING *`,
       [
-        store_no,
+        Number(store_no),
         user_name_last,
         user_name_last_furigana,
         user_name_first,
@@ -45,7 +98,7 @@ export const createUser = async (userData) => {
         mail_address,
         tel,
         tel_extension,
-        translatedLanguages, // Array of integers for translate_languages
+        translatedLanguages,
         password_expire,
         user_password,
         meeting_id,
@@ -54,14 +107,14 @@ export const createUser = async (userData) => {
       ]
     );
 
-    return result.rows[0]; // Return the created user
+    return result.rows[0];
   } catch (err) {
     console.error("Error inserting user:", err);
     throw new Error("Failed to insert user.");
   }
 };
 
-export const getUserById = async (id) => {
+export const getUserById = async (userNo: number): Promise<User | null> => {
   const query = `
     SELECT 
       user_info.*, 
@@ -83,14 +136,17 @@ export const getUserById = async (id) => {
   `;
 
   try {
-    const result = await pool.query(query, [id]);
-    return result.rows[0];
+    const result = await pool.query(query, [userNo]);
+    return result.rows[0] || null;
   } catch (err) {
     throw new Error("Failed to fetch user by ID.");
   }
 };
 
-export const updateUser = async (id, userData) => {
+export const updateUser = async (
+  id: number,
+  userData: UpdateUserData
+): Promise<User> => {
   const {
     user_name_last,
     user_name_last_furigana,
@@ -111,8 +167,6 @@ export const updateUser = async (id, userData) => {
     const translatedLanguages = Array.isArray(translate_languages)
       ? translate_languages
       : [];
-
-    // console.log(1445, id, userData);
 
     const result = await pool.query(
       `UPDATE user_info SET
@@ -136,21 +190,22 @@ export const updateUser = async (id, userData) => {
         meeting_id,
         meeting_passcode,
         user_note,
-        store_no,
+        Number(store_no),
         id,
       ]
     );
 
-    // console.log(21445, result.rows[0]);
     return result.rows[0];
-  } catch (err) {
+  } catch (err: any) {
     console.error("Database error:", err.message, err.stack);
     throw new Error("Failed to update user.");
   }
 };
 
-export const updateInterpretersStatus = async (mail_id, interpreter_status) => {
-  // console.log(2155, mail_id, interpreter_status);
+export const updateInterpretersStatus = async (
+  mail_id: string,
+  interpreter_status: string
+): Promise<User | null> => {
   try {
     const result = await pool.query(
       `UPDATE user_info SET 
@@ -161,21 +216,21 @@ export const updateInterpretersStatus = async (mail_id, interpreter_status) => {
     );
 
     if (result.rows.length === 0) {
-      return null; // No user found with the given ID
+      return null;
     }
 
     return result.rows[0];
-  } catch (err) {
+  } catch (err: any) {
     console.error("Database error:", err.message, err.stack);
     throw new Error("Failed to update user.");
   }
 };
 
-export const deleteUsers = async (ids) => {
+export const deleteUsers = async (user_nos: number[]) => {
   try {
     const result = await pool.query(
       "UPDATE user_info SET user_deleted = true WHERE user_no = ANY($1::int[]) RETURNING *",
-      [ids]
+      [user_nos]
     );
     return result.rows;
   } catch (err) {
@@ -183,7 +238,7 @@ export const deleteUsers = async (ids) => {
   }
 };
 
-export const getAllInterpreters = async () => {
+export const getAllInterpreters = async (): Promise<User[]> => {
   const query = `
     SELECT 
       user_info.*, 
@@ -214,7 +269,7 @@ export const getAllInterpreters = async () => {
   }
 };
 
-export const getAllContractors = async () => {
+export const getAllContractors = async (): Promise<User[]> => {
   const query = `
     SELECT 
       user_info.*, 
@@ -245,85 +300,67 @@ export const getAllContractors = async () => {
   }
 };
 
-export const getContractorsAuth = async (mail_address) => {
-  // console.log("Checking credentials in the database...");
-
+export const getContractorsAuth = async (
+  mail_address: string
+): Promise<{ mail_address: string; user_password: string }[]> => {
   try {
-    // Query to get the user with the matching email address
     const result = await pool.query(
       `SELECT mail_address, user_password FROM user_info WHERE user_type = 'contractor' AND mail_address = $1`,
       [mail_address]
     );
 
-    // If no user is found
     if (result.rows.length === 0) {
-      // console.log("invalid credentials:");
       return [];
     }
 
-    // console.log("valid credentials:");
-
-    // Return the user data (assuming the result only returns one user)
     return result.rows;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Database error:", error.message);
     throw new Error("Failed to fetch contractor credentials.");
   }
 };
 
-export const getInterpretersAuth = async (mail_address) => {
-  // console.log("Checking credentials in the database...");
-
+export const getInterpretersAuth = async (
+  mail_address: string
+): Promise<{ mail_address: string; user_password: string }[]> => {
   try {
-    // Query to get the user with the matching email address
     const result = await pool.query(
       `SELECT mail_address, user_password FROM user_info WHERE user_type = 'interpreter' AND mail_address = $1`,
       [mail_address]
     );
 
-    // If no user is found
     if (result.rows.length === 0) {
-      // console.log("invalid credentials:");
       return [];
     }
 
-    // console.log("valid credentials:");
-
-    // Return the user data (assuming the result only returns one user)
     return result.rows;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Database error:", error.message);
     throw new Error("Failed to fetch contractor credentials.");
   }
 };
 
-export const getAdministratorsAuth = async (mail_address) => {
-  // console.log("Checking credentials in the database...");
-
+export const getAdministratorsAuth = async (
+  mail_address: string
+): Promise<{ mail_address: string; user_password: string }[]> => {
   try {
-    // Query to get the user with the matching email address
     const result = await pool.query(
       `SELECT mail_address, user_password FROM user_info WHERE user_type = 'administrator' AND mail_address = $1`,
       [mail_address]
     );
 
-    // If no user is found
     if (result.rows.length === 0) {
-      // console.log("invalid credentials:");
       return [];
     }
 
-    // console.log("valid credentials:");
-
-    // Return the user data (assuming the result only returns one user)
     return result.rows;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Database error:", error.message);
     throw new Error("Failed to fetch contractor credentials.");
   }
 };
 
-export const getAllAdministrators = async () => {
+export const getAllAdministrators = async (): Promise<User[]> => {
   const query = `
     SELECT 
       user_info.*, 
@@ -351,16 +388,5 @@ export const getAllAdministrators = async () => {
     return result.rows;
   } catch (err) {
     throw new Error("Failed to fetch users.");
-  }
-};
-
-export const getUserNumbersAndNames = async () => {
-  try {
-    const result = await pool.query(
-      "SELECT user_no, user_name_last, user_name_first FROM user_info"
-    );
-    return result.rows;
-  } catch (err) {
-    throw new Error("Failed to fetch user numbers and names.");
   }
 };
