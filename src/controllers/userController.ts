@@ -1,40 +1,6 @@
 import * as userModel from "../models/userModel";
 import { Request, Response } from "express";
-
-interface UserRequestBody {
-  store_no: string;
-  user_name_last: string;
-  user_name_last_furigana: string;
-  user_name_first: string;
-  user_name_first_furigana: string;
-  user_type: string;
-  mail_address: string;
-  tel: string;
-  tel_extension: string;
-  translate_languages: (string | number)[];
-  password_expire: Date;
-  user_password: string;
-  meeting_id: string;
-  meeting_passcode: string;
-  user_note: string;
-}
-
-interface UpdateUserRequestBody extends UserRequestBody {
-  id: string;
-}
-
-interface UpdateInterpretersStatusRequestBody {
-  interpreter_status: string;
-}
-
-interface DeleteUsersBody {
-  ids: string[]; // Assuming the IDs are strings
-}
-
-interface AuthRequestBody {
-  mail_address: string;
-  user_password: string;
-}
+import { AuthBody } from "../types/userTypes";
 
 export const createUser = async (req: Request, res: Response) => {
   const {
@@ -216,7 +182,7 @@ export const getAllContractors = async (req: Request, res: Response) => {
 };
 
 export const getContractorsAuth = async (req: Request, res: Response) => {
-  const { mail_address, user_password }: AuthRequestBody = req.body;
+  const { mail_address, user_password }: AuthBody = req.body;
   try {
     // Fetch the user from the database by email address
     const users = await userModel.getContractorsAuth(mail_address);
@@ -256,7 +222,7 @@ export const getContractorsAuth = async (req: Request, res: Response) => {
 };
 
 export const getInterpretersAuth = async (req: Request, res: Response) => {
-  const { mail_address, user_password }: AuthRequestBody = req.body;
+  const { mail_address, user_password }: AuthBody = req.body;
   try {
     const users = await userModel.getInterpretersAuth(mail_address);
 
@@ -295,7 +261,7 @@ export const getInterpretersAuth = async (req: Request, res: Response) => {
 };
 
 export const getAdministratorsAuth = async (req: Request, res: Response) => {
-  const { mail_address, user_password }: AuthRequestBody = req.body;
+  const { mail_address, user_password }: AuthBody = req.body;
   try {
     const users = await userModel.getAdministratorsAuth(mail_address);
 

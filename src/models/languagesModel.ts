@@ -1,23 +1,5 @@
 import pool from "../db"; // Assuming you have a pool.ts for db connection
-
-// Define the Language type
-interface Language {
-  language_name: string;
-  language_name_furigana: string;
-  language_note: string;
-}
-
-interface LanguageWithId extends Language {
-  languages_support_no: number;
-  created_at: string;
-  updated_at: string;
-  language_deleted: boolean;
-}
-
-interface LanguageUpdate extends Partial<Language> {
-  language_name_furigana?: string;
-  language_note?: string;
-}
+import { Language, LanguageWithId } from "../types/languageSupportTypes";
 
 // Create a new language
 export const createLanguage = async (
@@ -94,9 +76,8 @@ export const getLanguageById = async (
 // Update language
 export const updateLanguage = async (
   id: number,
-  languageData: LanguageUpdate
+  languageData: Language
 ): Promise<LanguageWithId | null> => {
-  // console.log("update");
   const { language_name, language_name_furigana, language_note } = languageData;
   try {
     const result = await pool.query(

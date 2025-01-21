@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import * as companyModel from "../models/companyModel.js";
+import { CompanyData } from "../types/companyTypes";
 
 export const createCompany = async (req: Request, res: Response) => {
-  const { company_name, company_name_furigana, company_note } = req.body;
+  const { company_name, company_name_furigana, company_note }: CompanyData =
+    req.body;
   console.log(156, req.body);
   try {
     const company = await companyModel.createCompany({
@@ -31,7 +33,8 @@ export const getCompany = async (req: Request, res: Response) => {
 
 export const updateCompany = async (req: Request, res: Response) => {
   const company_no = Number(req.params.company_no);
-  const { company_name, company_name_furigana, company_note } = req.body;
+  const { company_name, company_name_furigana, company_note }: CompanyData =
+    req.body;
   // console.log(2155, req.params, req.body);
   try {
     const company = await companyModel.updateCompany(company_no, {

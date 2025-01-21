@@ -1,38 +1,7 @@
 import pool from "../db"; // Import the database connection pool
-
-// Type definition for store data
-interface StoreData {
-  company_no: string;
-  store_name: string;
-  store_name_furigana: string;
-  zip: string;
-  pref: string;
-  city: string;
-  street: string;
-  building_name: string;
-  tel: string;
-  fax: string;
-  store_note: string;
-}
+import { StoreData, StoreDetails } from "../types/storeTypes";
 
 // Type definition for store details
-interface StoreDetails {
-  store_no: number;
-  company_no: number;
-  store_name: string;
-  store_name_furigana: string;
-  zip: string;
-  pref: string;
-  city: string;
-  street: string;
-  building_name: string;
-  tel: string;
-  fax: string;
-  store_note: string;
-  created_at: string;
-  updated_at: string;
-  store_delete: boolean;
-}
 
 // Insert a new store
 export const createStore = async (
@@ -99,8 +68,6 @@ export const updateStore = async (
     fax,
     store_note,
   } = storeData;
-
-  // console.log(1444, storeData, storeNo);
 
   try {
     const result = await pool.query(
@@ -178,7 +145,6 @@ export const getAllStores = async (): Promise<StoreDetails[]> => {
 export const getStoreByStoreNo = async (
   storeNo: number
 ): Promise<StoreDetails | null> => {
-  // console.log(889, storeNo);
   try {
     const result = await pool.query(
       `SELECT store_info.*, company_info.company_name 
@@ -211,13 +177,4 @@ export const getStoreDetailsByCompany = async (
   } catch (err) {
     throw new Error("Failed to fetch store details by company ID.");
   }
-};
-
-export default {
-  createStore,
-  getAllStores,
-  getStoreByStoreNo,
-  updateStore,
-  deleteStores,
-  getStoreDetailsByCompany,
 };

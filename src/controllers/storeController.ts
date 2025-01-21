@@ -1,20 +1,6 @@
 import { Request, Response } from "express";
-import storeModel from "../models/storeModel"; // Import the store model
-
-// Define interfaces for request bodies and query parameters
-interface StoreData {
-  company_no: string;
-  store_name: string;
-  store_name_furigana: string;
-  zip: string;
-  pref: string;
-  city: string;
-  street: string;
-  building_name: string;
-  tel: string;
-  fax: string;
-  store_note: string;
-}
+import * as storeModel from "../models/storeModel";
+import { StoreData } from "../types/storeTypes";
 
 // Handle creating a new store
 export const createStoreController = async (
@@ -44,8 +30,6 @@ export const updateStoreController = async (
 ): Promise<Response> => {
   const storeNo = Number(req.params.storeNo); // Extract storeNo from the request params
   const storeData: StoreData = req.body; // Extract store data from the request body
-
-  // console.log(147, storeData, req.params);
 
   try {
     const updatedStore = await storeModel.updateStore(storeNo, storeData);
@@ -108,7 +92,6 @@ export const getStoreByStoreNoController = async (
   res: Response
 ): Promise<Response> => {
   const storeNo = Number(req.params.storeNo); // Extract storeNo from the request params
-  // console.log(1889, req.params.storeNo);
   try {
     const store = await storeModel.getStoreByStoreNo(storeNo);
     if (!store) {
@@ -141,13 +124,4 @@ export const getStoreDetailsByCompanyController = async (
     console.error("Error fetching store details by company:", err);
     return res.status(500).send("Server error");
   }
-};
-
-export default {
-  createStoreController,
-  updateStoreController,
-  deleteStoresController,
-  getAllStoresController,
-  getStoreByStoreNoController,
-  getStoreDetailsByCompanyController,
 };

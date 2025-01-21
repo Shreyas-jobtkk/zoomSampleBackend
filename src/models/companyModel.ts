@@ -1,11 +1,5 @@
 import pool from "../db.js";
-
-// Type Definitions
-interface CompanyData {
-  company_name: string;
-  company_name_furigana: string;
-  company_note: string;
-}
+import { CompanyData } from "../types/companyTypes";
 
 export const createCompany = async (companyData: CompanyData) => {
   console.log(157, companyData);
