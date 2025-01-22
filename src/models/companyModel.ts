@@ -82,7 +82,7 @@ export const getAllCompanies = async () => {
 export const getCompanyNumbersAndNames = async () => {
   try {
     const result = await pool.query(
-      "SELECT company_no, company_name FROM company_info"
+      "SELECT company_no, company_name FROM company_info WHERE company_deleted = false"
     );
     return result.rows;
   } catch (err: any) {

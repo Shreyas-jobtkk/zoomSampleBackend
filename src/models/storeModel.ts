@@ -128,7 +128,7 @@ export const getAllStores = async (): Promise<StoreDetails[]> => {
     JOIN 
       company_info
     ON 
-      store_info.company_no = company_info.company_no
+      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
     ORDER BY 
       store_info.store_no
   `;

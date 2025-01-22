@@ -196,11 +196,11 @@ export const getAllInterpreters = async (): Promise<User[]> => {
     JOIN 
       store_info
     ON 
-      user_info.store_no = store_info.store_no
+      user_info.store_no = store_info.store_no AND store_info.store_delete = false
     JOIN 
       company_info
     ON 
-      store_info.company_no = company_info.company_no
+      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
     WHERE 
       user_info.user_type = 'interpreter'
     ORDER BY 
@@ -227,13 +227,44 @@ export const getAllContractors = async (): Promise<User[]> => {
     JOIN 
       store_info
     ON 
-      user_info.store_no = store_info.store_no
+      user_info.store_no = store_info.store_no AND store_info.store_delete = false
     JOIN 
       company_info
     ON 
-      store_info.company_no = company_info.company_no
+      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
     WHERE 
       user_info.user_type = 'contractor'
+    ORDER BY 
+      user_info.store_no;
+  `;
+
+  try {
+    const result = await pool.query(query);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Failed to fetch users.");
+  }
+};
+
+export const getAllAdministrators = async (): Promise<User[]> => {
+  const query = `
+    SELECT 
+      user_info.*, 
+      store_info.store_name,
+      store_info.company_no,
+      company_info.company_name
+    FROM 
+      user_info
+    JOIN 
+      store_info
+    ON 
+      user_info.store_no = store_info.store_no AND store_info.store_delete = false
+    JOIN 
+      company_info
+    ON 
+      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
+    WHERE 
+      user_info.user_type = 'administrator'
     ORDER BY 
       user_info.store_no;
   `;
@@ -303,36 +334,5 @@ export const getAdministratorsAuth = async (
   } catch (error: any) {
     console.error("Database error:", error.message);
     throw new Error("Failed to fetch contractor credentials.");
-  }
-};
-
-export const getAllAdministrators = async (): Promise<User[]> => {
-  const query = `
-    SELECT 
-      user_info.*, 
-      store_info.store_name,
-      store_info.company_no,
-      company_info.company_name
-    FROM 
-      user_info
-    JOIN 
-      store_info
-    ON 
-      user_info.store_no = store_info.store_no
-    JOIN 
-      company_info
-    ON 
-      store_info.company_no = company_info.company_no
-    WHERE 
-      user_info.user_type = 'administrator'
-    ORDER BY 
-      user_info.store_no;
-  `;
-
-  try {
-    const result = await pool.query(query);
-    return result.rows;
-  } catch (err) {
-    throw new Error("Failed to fetch users.");
   }
 };
