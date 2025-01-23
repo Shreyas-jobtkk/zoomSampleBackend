@@ -67,7 +67,7 @@ app.use("/user", userRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: true, // Allow requests from this origin
+    origin: process.env.ZOOM_FRONTEND_URL, // Allow requests from this origin
     methods: ["GET", "POST"], // Specify allowed methods
     credentials: true, // Allow cookies or authentication headers
   },
