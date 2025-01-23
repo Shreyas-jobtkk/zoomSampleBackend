@@ -26,7 +26,29 @@ const app = express();
 app.use(express.json(), cors());
 app.options("*", cors());
 
-app.use("/", signature);
+// Use CORS middleware to enable cross-origin requests
+app.use(
+  cors({
+    origin: process.env.ZOOM_FRONTEND_URL, // Replace with your frontend's origin
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // If cookies or authentication headers are needed
+  })
+);
+
+// Middleware to set security headers
+app.use((req, res, next) => {
+  res.setHeader(
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains; preload"
+  );
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self';"
+  );
+  res.setHeader("Referrer-Policy", "no-referrer-when-downgrade");
+  next();
+});
 
 // app.post("/api/terminalActivity", async (req, res) => {
 //   const { terminal_id, personStatus } = req.body;
@@ -36,7 +58,7 @@ app.use("/", signature);
 //   });
 //   updateUserStatus(terminal_id, personStatus);
 // });
-
+app.use("/", signature);
 app.use("/company", companyRoutes);
 app.use("/stores", storeRoutes);
 app.use("/languages", languagesRoutes);
@@ -50,15 +72,6 @@ const io = new Server(server, {
     credentials: true, // Allow cookies or authentication headers
   },
 });
-
-// Use CORS middleware to enable cross-origin requests
-app.use(
-  cors({
-    origin: "http://localhost:4000", // Replace with your frontend's origin
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true, // If cookies or authentication headers are needed
-  })
-);
 
 // app.options('*', cors());
 
