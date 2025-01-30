@@ -10,6 +10,7 @@ import userRoutes from "./routes/userRouter.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import storeRoutes from "./routes/storeRoutes.js";
 import createMeeting from "./routes/zoomRoutes.js";
+import { store, setMeetingData, resetMeetingData } from "./store";
 // import { createMeeting } from "./createMeeting.js";
 
 // Test the database connection
@@ -62,6 +63,12 @@ app.use(
 // });
 // createMeeting();
 
+app.post("/reqMeeting", (req, res) => {
+  const { meetingNumber, password } = req.body;
+  console.log("Received from frontend:", meetingNumber, password);
+  res.json({ success: true, message: "Meeting details received." });
+});
+
 app.use("/createMeeting", createMeeting);
 app.use("/zoom", signature);
 app.use("/company", companyRoutes);
@@ -77,6 +84,42 @@ const io = new Server(server, {
     credentials: true, // Allow cookies or authentication headers
   },
 });
+
+io.on("connection", (socket) => {
+  // // console.log('a user connected');
+
+  socket.on("meetingDetails", async (data) => {
+    const { meetingNumber, password } = data;
+
+    if (meetingNumber && password) {
+      // Dispatch the action to store the meeting details
+      store.dispatch(setMeetingData({ meetingNumber, password }));
+
+      // Log the updated state after dispatching
+      // console.log("Updated state:", store.getState().app.meetingData);
+    } else {
+      console.log("Invalid data received for meetingDetails:", data);
+    }
+  });
+});
+
+// Endpoint to get meeting data
+app.get("/get-meeting-data", (req, res) => {
+  // console.log("Fetching meeting data:", store.getState().app.meetingData);
+  res.json(store.getState().app.meetingData);
+});
+
+// Endpoint to initialize meeting data
+// app.post("/set-meeting-data", (req, res) => {
+// const { meetingNumber, password } = req.body;
+
+// if (meetingNumber && password) {
+//   store.dispatch(setMeetingData({ meetingNumber, password }));
+//   res.json({ message: "Meeting data initialized", state: store.getState() });
+// } else {
+//   res.status(400).json({ message: "Invalid data" });
+// }
+// });
 
 // app.options('*', cors());
 

@@ -10,19 +10,19 @@ const handleWebSocket = () => {
   io.on("connection", (socket) => {
     // // console.log('a user connected');
 
-    socket.on("meetingDetails", async (data) => {
-      console.log(25678, data); // Log the entire object, should print { meetingNumber, password }
+    // socket.on("meetingDetails", async (data) => {
+    //   console.log(25678, data); // Log the entire object, should print { meetingNumber, password }
 
-      // Access meetingNumber and password from the received data
-      const { meetingNumber, password } = data;
+    //   // Access meetingNumber and password from the received data
+    //   const { meetingNumber, password } = data;
 
-      // Do something with meetingNumber and password, e.g. validation or sending a response
-      console.log(`Meeting Number: ${meetingNumber}, Password: ${password}`);
-      io.emit("meetingDetailsForClient", { meetingNumber, password });
+    //   // Do something with meetingNumber and password, e.g. validation or sending a response
+    //   console.log(`Meeting Number: ${meetingNumber}, Password: ${password}`);
+    //   io.emit("meetingDetailsForClient", data);
 
-      // Optionally emit another event, for example:
-      // io.emit("zoomStreamEmoji", data);
-    });
+    //   // Optionally emit another event, for example:
+    //   // io.emit("zoomStreamEmoji", data);
+    // });
 
     socket.on("dataFromFrontend", async (data) => {
       console.log(555, data);

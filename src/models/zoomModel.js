@@ -60,8 +60,6 @@ export async function createMeeting() {
       },
     });
 
-    console.log(422, response.data.id, response.data.password);
-
     return { id: response.data.id, password: response.data.password };
   } catch (error) {
     console.error("Error creating meeting:", error.response?.data || error);
