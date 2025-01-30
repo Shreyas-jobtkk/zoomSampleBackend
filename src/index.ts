@@ -9,6 +9,8 @@ import languagesRoutes from "./routes/languagesRoutes.js";
 import userRoutes from "./routes/userRouter.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import storeRoutes from "./routes/storeRoutes.js";
+import createMeeting from "./routes/zoomRoutes.js";
+// import { createMeeting } from "./createMeeting.js";
 
 // Test the database connection
 pool.connect((err: any) => {
@@ -58,7 +60,10 @@ app.use(
 //   });
 //   updateUserStatus(terminal_id, personStatus);
 // });
-app.use("/", signature);
+// createMeeting();
+
+app.use("/createMeeting", createMeeting);
+app.use("/zoom", signature);
 app.use("/company", companyRoutes);
 app.use("/stores", storeRoutes);
 app.use("/languages", languagesRoutes);
