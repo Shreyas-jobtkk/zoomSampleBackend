@@ -55,7 +55,7 @@ export async function createMeeting() {
   const meetingData = {
     topic: "Sample Meeting",
     type: 1, // Instant Meeting
-    duration: 30, // Duration in minutes
+    // duration: 30, // Duration in minutes
     agenda: "Discuss project updates",
   };
 
