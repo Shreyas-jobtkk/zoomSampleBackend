@@ -90,16 +90,9 @@ io.on("connection", (socket) => {
 
   socket.on("meetingDetails", async (data) => {
     const { meetingNumber, password } = data;
-
-    if (meetingNumber && password) {
-      // Dispatch the action to store the meeting details
-      store.dispatch(setMeetingData({ meetingNumber, password }));
-
-      // Log the updated state after dispatching
-      // console.log("Updated state:", store.getState().app.meetingData);
-    } else {
-      console.log("Invalid data received for meetingDetails:", data);
-    }
+    console.log(155, data);
+    // Dispatch the action to store the meeting details
+    store.dispatch(setMeetingData({ meetingNumber, password }));
   });
 });
 
