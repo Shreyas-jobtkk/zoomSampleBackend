@@ -48,16 +48,25 @@ router.post("/", (req, res) => {
     return res.status(400).json({ errors: validationErrors });
   }
 
-  const { meetingNumber, role, expirationSeconds } = requestBody;
+  const { meetingNumber, role, SDKAccount, expirationSeconds } = requestBody;
   const iat = Math.floor(Date.now() / 1000);
   const exp = expirationSeconds ? iat + expirationSeconds : iat + 60 * 60 * 2;
   const oHeader = { alg: "HS256", typ: "JWT" };
 
-  // // console.log(447,process.env.DATABASE_URL)
+  const getZoomSDKKey = (index) => {
+    return process.env[`ZOOM_MEETING_SDK_KEY_${index}`];
+  };
+
+  const getZoomSDKSecret = (index) => {
+    return process.env[`ZOOM_MEETING_SDK_SECRET_${index}`];
+  };
+
+  const ZOOM_MEETING_SDK_KEY = getZoomSDKKey(Number(SDKAccount));
+  const ZOOM_MEETING_SDK_SECRET = getZoomSDKSecret(Number(SDKAccount));
 
   const oPayload = {
-    appKey: process.env.ZOOM_MEETING_SDK_KEY,
-    sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
+    appKey: ZOOM_MEETING_SDK_KEY,
+    sdkKey: ZOOM_MEETING_SDK_KEY,
     mn: meetingNumber,
     role,
     iat,
@@ -71,7 +80,7 @@ router.post("/", (req, res) => {
     "HS256",
     sHeader,
     sPayload,
-    process.env.ZOOM_MEETING_SDK_SECRET
+    ZOOM_MEETING_SDK_SECRET
   );
 
   return res.json({ signature: sdkJWT });
