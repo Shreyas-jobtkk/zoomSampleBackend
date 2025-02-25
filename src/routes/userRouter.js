@@ -9,7 +9,10 @@ router.get("/contractor", userController.getAllContractors); // Get all interpre
 router.post("/contractor/auth", userController.getContractorsAuth); // Get all interpreters
 router.post("/interpreter/auth", userController.getInterpretersAuth); // Get all interpreters
 
-router.put("/interpreter/:mail", userController.updateInterpretersStatus); // Get all interpreters
+router.put(
+  "/interpreter/:interpreterNo",
+  userController.updateInterpretersStatus
+); // Get all interpreters
 router.post("/administrator/auth", userController.getAdministratorsAuth); // Get all interpreters
 router.get("/administrator", userController.getAllAdministrators); // Get all interpreters
 router.get("/:userNo", userController.getUserById); // Get a single user by ID

@@ -6,6 +6,8 @@ import {
   validateRequest,
 } from "./validations.js"; // Adjust the import as needed
 import KJUR from "jsrsasign"; // Assuming you are using this for JWT signing
+import * as userModel from "../src/models/userModel";
+// import { io } from "./index.js";
 
 const router = express.Router();
 
@@ -30,14 +32,91 @@ const coerceRequestBody = (body) => ({
   ),
 });
 
-// GET route
-router.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
+const getAllInterpretersLanguagesId = async () => {
+  try {
+    const users = await userModel.getAllInterpretersLanguagesId();
+    return users;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "An unexpected error occurred"
+    );
+  }
+};
+
+// io.on("connection", (socket) => {
+//   socket.on("callRequest", async (data) => {
+//     console.log(1557, data);
+
+//     io.emit("callRequestFromServer", data);
+//   });
+
+//   socket.on("cancelCallRequest", async (data) => {
+//     console.log(2557, data);
+
+//     io.emit("cancelCallRequestFromServer", data);
+//   });
+// });
 
 // POST route
-router.post("/", (req, res) => {
-  const requestBody = coerceRequestBody(req.body);
+// router.post("/", async (req, res) => {
+//   // Coerce the request body and validate it
+//   const requestBody = coerceRequestBody(req.body);
+//   const validationErrors = validateRequest(
+//     requestBody,
+//     propValidations,
+//     schemaValidations
+//   );
+
+//   if (validationErrors.length > 0) {
+//     return res.status(400).json({ errors: validationErrors });
+//   }
+
+//   const {
+//     meetingNumber,
+//     role,
+//     contractorNo,
+//     languageSupportNo,
+//     expirationSeconds,
+//   } = requestBody;
+
+//   console.log(1578, contractorNo, languageSupportNo);
+//   const iat = Math.floor(Date.now() / 1000);
+//   const exp = expirationSeconds ? iat + expirationSeconds : iat + 60 * 60 * 2;
+//   const oHeader = { alg: "HS256", typ: "JWT" };
+//   try {
+//     // First, get the interpreters' data
+//     const users = await getAllInterpretersLanguagesId();
+
+//     const oPayload = {
+//       appKey: process.env.ZOOM_MEETING_SDK_KEY,
+//       sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
+//       mn: meetingNumber,
+//       role,
+//       iat,
+//       exp,
+//       tokenExp: exp,
+//     };
+
+//     const sHeader = JSON.stringify(oHeader);
+//     const sPayload = JSON.stringify(oPayload);
+//     const sdkJWT = KJUR.jws.JWS.sign(
+//       "HS256",
+//       sHeader,
+//       sPayload,
+//       process.env.ZOOM_MEETING_SDK_SECRET
+//     );
+
+//     // Send the combined response with both the users and the signature
+//     return res.status(200).json({ users, signature: sdkJWT });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: error.message });
+//   }
+// });
+
+const startZoomMeeting = async (meetingInfo) => {
+  // Coerce the request body and validate it
+  const requestBody = coerceRequestBody(meetingInfo);
   const validationErrors = validateRequest(
     requestBody,
     propValidations,
@@ -48,45 +127,43 @@ router.post("/", (req, res) => {
     return res.status(400).json({ errors: validationErrors });
   }
 
-  const { meetingNumber, role, SDKAccount, expirationSeconds } = requestBody;
+  const { meetingNumber, role, expirationSeconds } = requestBody;
+
+  // console.log(1578, contractorNo, languageSupportNo);
   const iat = Math.floor(Date.now() / 1000);
   const exp = expirationSeconds ? iat + expirationSeconds : iat + 60 * 60 * 2;
   const oHeader = { alg: "HS256", typ: "JWT" };
+  try {
+    // First, get the interpreters' data
+    // const users = await getAllInterpretersLanguagesId();
 
-  const getZoomSDKKey = (index) => {
-    return process.env[`ZOOM_MEETING_SDK_KEY_${index}`];
-  };
+    const oPayload = {
+      appKey: process.env.ZOOM_MEETING_SDK_KEY,
+      sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
+      mn: meetingNumber,
+      role,
+      iat,
+      exp,
+      tokenExp: exp,
+    };
 
-  const getZoomSDKSecret = (index) => {
-    return process.env[`ZOOM_MEETING_SDK_SECRET_${index}`];
-  };
+    const sHeader = JSON.stringify(oHeader);
+    const sPayload = JSON.stringify(oPayload);
+    const sdkJWT = KJUR.jws.JWS.sign(
+      "HS256",
+      sHeader,
+      sPayload,
+      process.env.ZOOM_MEETING_SDK_SECRET
+    );
 
-  const ZOOM_MEETING_SDK_KEY = getZoomSDKKey(Number(SDKAccount));
-  const ZOOM_MEETING_SDK_SECRET = getZoomSDKSecret(Number(SDKAccount));
-
-  console.log(2557, ZOOM_MEETING_SDK_KEY?.slice(0, 5));
-
-  const oPayload = {
-    appKey: ZOOM_MEETING_SDK_KEY,
-    sdkKey: ZOOM_MEETING_SDK_KEY,
-    mn: meetingNumber,
-    role,
-    iat,
-    exp,
-    tokenExp: exp,
-  };
-
-  const sHeader = JSON.stringify(oHeader);
-  const sPayload = JSON.stringify(oPayload);
-  const sdkJWT = KJUR.jws.JWS.sign(
-    "HS256",
-    sHeader,
-    sPayload,
-    ZOOM_MEETING_SDK_SECRET
-  );
-
-  return res.json({ signature: sdkJWT });
-});
+    // Send the combined response with both the users and the signature
+    return { signature: sdkJWT };
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 // Export the router
 export default router;
+export { startZoomMeeting };

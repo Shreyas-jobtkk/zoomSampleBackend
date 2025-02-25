@@ -149,16 +149,16 @@ export const updateUser = async (
 };
 
 export const updateInterpretersStatus = async (
-  mail_id: string,
+  interpreter_no: string,
   interpreter_status: string
 ): Promise<User | null> => {
   try {
     const result = await pool.query(
       `UPDATE user_info SET 
         user_status = $1 
-      WHERE mail_address = $2 
+      WHERE user_no = $2 
       RETURNING *`,
-      [interpreter_status, mail_id]
+      [interpreter_status, interpreter_no]
     );
 
     if (result.rows.length === 0) {
@@ -203,6 +203,35 @@ export const getAllInterpreters = async (): Promise<User[]> => {
       store_info.company_no = company_info.company_no AND company_info.company_deleted = false
     WHERE 
       user_info.user_type = 'interpreter'
+    ORDER BY 
+      user_info.store_no;
+  `;
+
+  try {
+    const result = await pool.query(query);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Failed to fetch users.");
+  }
+};
+
+export const getAllInterpretersLanguagesId = async (): Promise<User[]> => {
+  const query = `
+    SELECT 
+      user_info.user_no,
+      user_info.translate_languages
+    FROM 
+      user_info
+    JOIN 
+      store_info
+    ON 
+      user_info.store_no = store_info.store_no AND store_info.store_delete = false
+    JOIN 
+      company_info
+    ON 
+      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
+    WHERE 
+      user_info.user_type = 'interpreter' AND user_info.user_status = 'active'
     ORDER BY 
       user_info.store_no;
   `;
@@ -279,10 +308,12 @@ export const getAllAdministrators = async (): Promise<User[]> => {
 
 export const getContractorsAuth = async (
   mail_address: string
-): Promise<{ mail_address: string; user_password: string }[]> => {
+): Promise<
+  { mail_address: string; user_password: string; user_no: number }[]
+> => {
   try {
     const result = await pool.query(
-      `SELECT mail_address, user_password FROM user_info WHERE user_type = 'contractor' AND mail_address = $1`,
+      `SELECT mail_address, user_password,user_no FROM user_info WHERE user_type = 'contractor' AND mail_address = $1`,
       [mail_address]
     );
 
@@ -299,10 +330,12 @@ export const getContractorsAuth = async (
 
 export const getInterpretersAuth = async (
   mail_address: string
-): Promise<{ mail_address: string; user_password: string }[]> => {
+): Promise<
+  { mail_address: string; user_password: string; user_no: number }[]
+> => {
   try {
     const result = await pool.query(
-      `SELECT mail_address, user_password FROM user_info WHERE user_type = 'interpreter' AND mail_address = $1`,
+      `SELECT mail_address, user_password,user_no FROM user_info WHERE user_type = 'interpreter' AND mail_address = $1`,
       [mail_address]
     );
 
@@ -319,10 +352,12 @@ export const getInterpretersAuth = async (
 
 export const getAdministratorsAuth = async (
   mail_address: string
-): Promise<{ mail_address: string; user_password: string }[]> => {
+): Promise<
+  { mail_address: string; user_password: string; user_no: number }[]
+> => {
   try {
     const result = await pool.query(
-      `SELECT mail_address, user_password FROM user_info WHERE user_type = 'administrator' AND mail_address = $1`,
+      `SELECT mail_address, user_password,user_no FROM user_info WHERE user_type = 'administrator' AND mail_address = $1`,
       [mail_address]
     );
 

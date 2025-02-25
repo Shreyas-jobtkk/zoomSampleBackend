@@ -56,4 +56,5 @@ export interface User {
 export interface AuthBody {
   mail_address: string;
   user_password: string;
+  user_no: number;
 }

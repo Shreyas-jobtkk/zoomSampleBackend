@@ -110,16 +110,16 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 export const updateInterpretersStatus = async (req: Request, res: Response) => {
-  const mail_id = req.params.mail;
+  const interpreter_no = req.params.interpreterNo;
   const { interpreter_status } = req.body;
 
-  if (!mail_id || !interpreter_status) {
+  if (!interpreter_no || !interpreter_status) {
     return res.status(400).json({ message: "Invalid request data" });
   }
 
   try {
     const user = await userModel.updateInterpretersStatus(
-      mail_id,
+      interpreter_no,
       interpreter_status
     );
 
@@ -194,6 +194,7 @@ export const getContractorsAuth = async (req: Request, res: Response) => {
     }
 
     const user = users[0];
+    console.log(155, user);
     const isPasswordValid = user_password === user.user_password;
 
     if (!isPasswordValid) {
@@ -205,7 +206,7 @@ export const getContractorsAuth = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "valid credentials.",
-      mail: mail_address,
+      user_no: user.user_no,
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -244,7 +245,7 @@ export const getInterpretersAuth = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "valid credentials.",
-      mail: mail_address,
+      user_no: user.user_no,
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -283,7 +284,7 @@ export const getAdministratorsAuth = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "valid credentials.",
-      mail: mail_address,
+      user_no: user.user_no,
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
