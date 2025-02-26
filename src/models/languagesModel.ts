@@ -120,7 +120,6 @@ export const getLanguageNames = async (): Promise<
     const result = await pool.query(
       "SELECT language_name_furigana, language_name, languages_support_no FROM languages_support_info"
     );
-    console.log(1897, result.rows);
     return result.rows; // TypeScript will infer the correct type
   } catch (err) {
     throw new Error("Failed to fetch language names.");

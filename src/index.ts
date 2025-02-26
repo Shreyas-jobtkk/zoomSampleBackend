@@ -212,20 +212,31 @@ io.on("connection", (socket) => {
       signature: meetingJoinSignature,
       contractorNo: data.contractorNo,
       interpreterNumber: data.interpreterNumber,
+      response: data.response,
     };
     io.emit("interpreterServerResponse", meetingJoinData);
   });
 
   socket.on("cancelCallRequest", async (data) => {
-    // console.log(2557, data.contractorNo);
+    console.log(1557, data);
+    console.log(2557, reqUsers);
 
-    reqUsers = reqUsers.filter(
-      (item: any) => item.contractorNo !== data.contractorNo
-    );
+    const checkContractor = (arr: any, contractorNo: any) =>
+      arr.some((item: any) => item.contractorNo === contractorNo);
+
+    console.log(777, checkContractor(reqUsers, data.contractorNo)); // true
+
+    if (checkContractor(reqUsers, data.contractorNo)) {
+      reqUsers = reqUsers.filter(
+        (item: any) => item.contractorNo !== data.contractorNo
+      );
+    } else {
+      io.emit("cancelCallRequestFromServer", data);
+    }
+
+    console.log(3557, reqUsers);
 
     // console.log(208, reqUsers);
-
-    io.emit("cancelCallRequestFromServer", data);
   });
 
   // function processArray(reqUsers: any) {
