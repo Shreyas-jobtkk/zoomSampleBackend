@@ -48,22 +48,22 @@ router.post("/", (req, res) => {
   const exp = expirationSeconds ? iat + expirationSeconds : iat + 60 * 60 * 2;
   const oHeader = { alg: "HS256", typ: "JWT" };
 
-  const getZoomSDKKey = (index) => {
-    return process.env[`ZOOM_MEETING_SDK_KEY_${index}`];
-  };
+  // const getZoomSDKKey = (index) => {
+  //   return process.env[`ZOOM_MEETING_SDK_KEY_${index}`];
+  // };
 
-  const getZoomSDKSecret = (index) => {
-    return process.env[`ZOOM_MEETING_SDK_SECRET_${index}`];
-  };
+  // const getZoomSDKSecret = (index) => {
+  //   return process.env[`ZOOM_MEETING_SDK_SECRET_${index}`];
+  // };
 
-  const ZOOM_MEETING_SDK_KEY = getZoomSDKKey(Number(SDKAccount));
-  const ZOOM_MEETING_SDK_SECRET = getZoomSDKSecret(Number(SDKAccount));
+  // const ZOOM_MEETING_SDK_KEY = getZoomSDKKey(Number(SDKAccount));
+  // const ZOOM_MEETING_SDK_SECRET = getZoomSDKSecret(Number(SDKAccount));
 
-  console.log(2557, ZOOM_MEETING_SDK_KEY?.slice(0, 5));
+  // console.log(2557, ZOOM_MEETING_SDK_KEY?.slice(0, 5));
 
   const oPayload = {
-    appKey: ZOOM_MEETING_SDK_KEY,
-    sdkKey: ZOOM_MEETING_SDK_KEY,
+    appKey: process.env.ZOOM_MEETING_SDK_KEY,
+    sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
     mn: meetingNumber,
     role,
     iat,
@@ -77,7 +77,7 @@ router.post("/", (req, res) => {
     "HS256",
     sHeader,
     sPayload,
-    ZOOM_MEETING_SDK_SECRET
+    process.env.ZOOM_MEETING_SDK_SECRET
   );
 
   return res.json({ signature: sdkJWT });
