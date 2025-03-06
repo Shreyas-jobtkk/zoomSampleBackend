@@ -2,7 +2,7 @@ import express from "express";
 import { Server } from "socket.io";
 import cors from "cors"; // Import cors
 import http from "http";
-// import { handleWebSocket } from "./handleWebSocket.js";
+import { handleWebSocket } from "./handleWebSocket.js";
 import { startZoomMeeting } from "./signature.js";
 import signatureForCS from "./signatureForCS.js";
 import callLogRoutes from "./routes/callLogRoutes.js";
@@ -324,7 +324,7 @@ app.get("/get-meeting-data", (req, res) => {
 
 // app.options('*', cors());
 
-// handleWebSocket();
+handleWebSocket();
 
 export { app, io };
 
