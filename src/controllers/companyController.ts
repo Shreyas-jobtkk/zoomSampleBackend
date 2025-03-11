@@ -69,6 +69,23 @@ export const deleteCompanies = async (req: Request, res: Response) => {
   }
 };
 
+export const restoreCompanies = async (req: Request, res: Response) => {
+  const { company_nos } = req.body as { company_nos: number[] }; // Expecting an array of IDs
+
+  try {
+    const restoredCompanies = await companyModel.restoreCompanies(company_nos);
+    if (restoredCompanies.length === 0) {
+      return res.status(404).json({ message: "No companies found to restore" });
+    }
+    res.status(200).json({
+      message: "Companies restored successfully",
+      restored: restoredCompanies,
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const getCompanies = async (req: Request, res: Response) => {
   try {
     const companies = await companyModel.getAllCompanies();

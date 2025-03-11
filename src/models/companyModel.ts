@@ -69,6 +69,22 @@ export const deleteCompanies = async (company_nos: number[]) => {
   }
 };
 
+export const restoreCompanies = async (company_nos: number[]) => {
+  try {
+    const result = await pool.query(
+      `UPDATE company_info 
+       SET company_deleted = false 
+       WHERE company_no = ANY($1::int[]) 
+       RETURNING *`,
+      [company_nos]
+    );
+    return result.rows;
+  } catch (err: any) {
+    console.error("Error restoring companies:", err.message);
+    throw new Error("Failed to restore companies.");
+  }
+};
+
 export const getAllCompanies = async () => {
   try {
     const result = await pool.query("SELECT * FROM company_info");
