@@ -3,6 +3,8 @@ import * as storeController from "../controllers/storeController"; // Import all
 
 const router = express.Router();
 
+router.put("/restore", storeController.restoreStoresController); // Handle restoring stores
+
 // POST /stores: Create a new store
 router.post("/", storeController.createStoreController);
 

@@ -3,6 +3,7 @@ import * as userController from "../controllers/userController";
 
 const router = express.Router();
 
+router.put("/restore", userController.restoreUsersController); // Handle restoring users
 // router.get("/names", userController.getUserNames); // Get user names
 router.get("/interpreter", userController.getAllInterpreters); // Get all interpreters
 router.get("/contractor", userController.getAllContractors); // Get all interpreters

@@ -184,6 +184,27 @@ export const deleteUsers = async (user_nos: number[]) => {
   }
 };
 
+export const restoreUsers = async (user_nos: number[]) => {
+  const query = `
+      UPDATE user_info
+      SET 
+        user_deleted = false, 
+        updated_at = CURRENT_TIMESTAMP
+      WHERE 
+        user_no = ANY($1::int[]) 
+      RETURNING *
+    `;
+
+  const values = [user_nos];
+
+  try {
+    const result = await pool.query(query, values);
+    return result.rows; // Return all the restored users
+  } catch (err) {
+    throw new Error("Failed to restore users.");
+  }
+};
+
 export const getAllInterpreters = async (): Promise<User[]> => {
   const query = `
     SELECT 

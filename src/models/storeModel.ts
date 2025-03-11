@@ -117,6 +117,27 @@ export const deleteStores = async (
   }
 };
 
+export const restoreStores = async (store_nos: number[]) => {
+  const query = `
+      UPDATE store_info
+      SET 
+        store_delete = false, 
+        updated_at = CURRENT_TIMESTAMP
+      WHERE 
+        store_no = ANY($1::int[]) 
+      RETURNING *
+    `;
+
+  const values = [store_nos];
+
+  try {
+    const result = await pool.query(query, values);
+    return result.rows; // Return all the restored stores
+  } catch (err) {
+    throw new Error("Failed to restore stores.");
+  }
+};
+
 // Get all stores (excluding soft-deleted ones)
 export const getAllStores = async (): Promise<StoreDetails[]> => {
   const query = `

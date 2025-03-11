@@ -3,7 +3,7 @@ import express from "express";
 import * as languagesController from "../controllers/languagesController";
 
 const router = express.Router();
-
+router.put("/restore", languagesController.restoreLanguagesController); // Handle restoring languages
 router.get("/names", languagesController.getLanguageNames); // Fetch only language names and IDs
 router.get("/", languagesController.getAllLanguages); // Get all languages
 router.get("/:language_no", languagesController.getLanguage); // Get a single language by ID

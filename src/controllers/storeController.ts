@@ -65,6 +65,27 @@ export const deleteStoresController = async (
   }
 };
 
+export const restoreStoresController = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { store_nos } = req.body as { store_nos: number[] }; // Extract store IDs (array of numbers) from the request body
+
+  try {
+    const restoredStores = await storeModel.restoreStores(store_nos);
+    if (restoredStores.length === 0) {
+      return res.status(404).json({ message: "No stores found to restore" });
+    }
+    return res.status(200).json({
+      message: "Stores restored successfully",
+      restored: restoredStores,
+    });
+  } catch (err: any) {
+    console.error("Error restoring stores:", err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 // Handle fetching all stores
 export const getAllStoresController = async (
   req: Request,

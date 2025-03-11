@@ -108,6 +108,21 @@ export const deleteLanguages = async (
   }
 };
 
+export const restoreLanguages = async (language_nos: number[]) => {
+  try {
+    const result = await pool.query(
+      `UPDATE languages_support_info
+      SET language_deleted = false, updated_at = CURRENT_TIMESTAMP 
+      WHERE languages_support_no = ANY($1::int[]) 
+      RETURNING *`,
+      [language_nos]
+    );
+    return result.rows;
+  } catch (err) {
+    throw new Error("Failed to restore languages.");
+  }
+};
+
 // Fetch only language_name and languages_support_no
 export const getLanguageNames = async (): Promise<
   {

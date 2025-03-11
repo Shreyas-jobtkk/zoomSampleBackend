@@ -113,6 +113,28 @@ export const deleteLanguages = async (
   }
 };
 
+export const restoreLanguagesController = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { language_nos } = req.body as { language_nos: number[] }; // Expecting an array of language IDs
+
+  try {
+    const restoredLanguages =
+      await languagesModel.restoreLanguages(language_nos);
+    if (restoredLanguages.length === 0) {
+      return res.status(404).json({ message: "No languages found to restore" });
+    }
+    return res.status(200).json({
+      message: "Languages restored successfully",
+      restored: restoredLanguages,
+    });
+  } catch (err: any) {
+    console.error("Error restoring languages:", err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 // Get only language_name and languages_support_no
 export const getLanguageNames = async (
   req: Request,

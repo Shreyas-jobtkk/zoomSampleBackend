@@ -155,6 +155,27 @@ export const deleteUsers = async (req: Request, res: Response) => {
   }
 };
 
+export const restoreUsersController = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { user_nos } = req.body as { user_nos: number[] }; // Extract user IDs (array of numbers) from the request body
+
+  try {
+    const restoredUsers = await userModel.restoreUsers(user_nos);
+    if (restoredUsers.length === 0) {
+      return res.status(404).json({ message: "No users found to restore" });
+    }
+    return res.status(200).json({
+      message: "Users restored successfully",
+      restored: restoredUsers,
+    });
+  } catch (err: any) {
+    console.error("Error restoring users:", err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 export const getAllInterpreters = async (req: Request, res: Response) => {
   try {
     const users = await userModel.getAllInterpreters();
