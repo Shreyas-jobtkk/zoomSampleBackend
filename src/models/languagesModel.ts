@@ -21,11 +21,64 @@ export const createLanguage = async (
 };
 
 // Get all languages
-export const getAllLanguages = async (): Promise<LanguageWithId[]> => {
+export const getAllLanguages = async (
+  page: number,
+  limit: number,
+  language_no_min: number | string,
+  language_no_max: number | string,
+  language_name: string,
+  language_name_furigana: string
+) => {
   try {
-    const result = await pool.query("SELECT * FROM languages_support_info");
-    return result.rows; // TypeScript automatically infers the type of rows
-  } catch (err) {
+    const values: any[] = [];
+    const conditions: string[] = [];
+
+    if (language_no_min !== "" && language_no_max !== "") {
+      values.push(language_no_min, language_no_max);
+      conditions.push(
+        `languages_support_no BETWEEN $${values.length - 1} AND $${values.length}`
+      );
+    } else if (language_no_min !== "") {
+      values.push(language_no_min);
+      conditions.push(`languages_support_no >= $${values.length}`);
+    } else if (language_no_max !== "") {
+      values.push(language_no_max);
+      conditions.push(`languages_support_no <= $${values.length}`);
+    }
+
+    if (language_name) {
+      values.push(`%${language_name}%`);
+      conditions.push(`language_name ILIKE $${values.length}`);
+    }
+
+    if (language_name_furigana) {
+      values.push(`%${language_name_furigana}%`);
+      conditions.push(`language_name_furigana ILIKE $${values.length}`);
+    }
+
+    let countQuery = "SELECT COUNT(*) FROM languages_support_info";
+    if (conditions.length > 0) {
+      countQuery += ` WHERE ${conditions.join(" AND ")}`;
+    }
+
+    const countResult = await pool.query(countQuery, values);
+    const totalRecords = parseInt(countResult.rows[0].count, 10);
+
+    let dataQuery = "SELECT * FROM languages_support_info";
+    let dataValues = [...values];
+
+    if (conditions.length > 0) {
+      dataQuery += ` WHERE ${conditions.join(" AND ")}`;
+    }
+
+    const offset = (page - 1) * limit;
+    dataValues.push(limit, offset);
+    dataQuery += ` ORDER BY languages_support_no ASC LIMIT $${dataValues.length - 1} OFFSET $${dataValues.length}`;
+
+    const result = await pool.query(dataQuery, dataValues);
+    return { totalRecords, languages: result.rows };
+  } catch (err: any) {
+    console.error("Error fetching languages:", err.message);
     throw new Error("Failed to fetch languages.");
   }
 };

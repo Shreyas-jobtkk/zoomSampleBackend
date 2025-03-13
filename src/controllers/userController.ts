@@ -177,28 +177,182 @@ export const restoreUsersController = async (
 };
 
 export const getAllInterpreters = async (req: Request, res: Response) => {
+  console.log("Request Query:", req.query);
+  const {
+    page,
+    limit,
+    company_no,
+    store_no,
+    interpreter_no_min,
+    interpreter_no_max,
+    interpreter_name_first,
+    interpreter_name_furigana_first,
+    interpreter_name_last,
+    interpreter_name_furigana_last,
+    languages,
+  } = req.query;
+
+  // Ensure that page and limit are valid numbers
+  const pageNumber = isNaN(Number(page)) ? 1 : Number(page);
+  const limitNumber = isNaN(Number(limit)) ? 10 : Number(limit);
+  const companyNo = company_no ? Number(company_no) : "";
+  const storeNo = store_no ? Number(store_no) : "";
+  const minInterpreterNo = interpreter_no_min ? Number(interpreter_no_min) : "";
+  const maxInterpreterNo = interpreter_no_max ? Number(interpreter_no_max) : "";
+  const interpreterFirstName =
+    typeof interpreter_name_first === "string" ? interpreter_name_first : "";
+  const interpreterFirstNameFurigana =
+    typeof interpreter_name_furigana_first === "string"
+      ? interpreter_name_furigana_first
+      : "";
+  const interpreterLastName =
+    typeof interpreter_name_last === "string" ? interpreter_name_last : "";
+  const interpreterLastNameFurigana =
+    typeof interpreter_name_furigana_last === "string"
+      ? interpreter_name_furigana_last
+      : "";
+
+  let interpreterLanguages: string[] = [];
+  if (
+    Array.isArray(languages) &&
+    languages.every((lang) => typeof lang === "string")
+  ) {
+    console.log(444, languages);
+    interpreterLanguages = languages;
+  }
+
   try {
-    const users = await userModel.getAllInterpreters();
-    res.status(200).json(users);
+    const interpreters = await userModel.getAllInterpreters(
+      pageNumber,
+      limitNumber,
+      companyNo,
+      storeNo,
+      minInterpreterNo,
+      maxInterpreterNo,
+      interpreterFirstName,
+      interpreterFirstNameFurigana,
+      interpreterLastName,
+      interpreterLastNameFurigana,
+      interpreterLanguages
+    );
+
+    return res.status(200).json(interpreters);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     } else {
-      res.status(500).json({ message: "An unexpected error occurred" });
+      return res.status(500).json({ message: "An unexpected error occurred" });
     }
   }
 };
 
 export const getAllContractors = async (req: Request, res: Response) => {
+  const {
+    page,
+    limit,
+    company_no,
+    store_no,
+    contractor_no_min,
+    contractor_no_max,
+    contractor_name_first,
+    contractor_name_furigana_first,
+    contractor_name_last,
+    contractor_name_furigana_last,
+  } = req.query;
+
+  // Ensure that page and limit are valid numbers
+  const pageNumber = isNaN(Number(page)) ? 1 : Number(page);
+  const limitNumber = isNaN(Number(limit)) ? 10 : Number(limit);
+  const companyNo = company_no ? Number(company_no) : "";
+  const storeNo = store_no ? Number(store_no) : "";
+  const minContractorNo = contractor_no_min ? Number(contractor_no_min) : "";
+  const maxContractorNo = contractor_no_max ? Number(contractor_no_max) : "";
+  const contractorFirstName =
+    typeof contractor_name_first === "string" ? contractor_name_first : "";
+  const contractorFirstNameFurigana =
+    typeof contractor_name_furigana_first === "string"
+      ? contractor_name_furigana_first
+      : "";
+  const contractorLastName =
+    typeof contractor_name_last === "string" ? contractor_name_last : "";
+  const contractorLastNameFurigana =
+    typeof contractor_name_furigana_last === "string"
+      ? contractor_name_furigana_last
+      : "";
+
   try {
-    const users = await userModel.getAllContractors();
-    res.status(200).json(users);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "An unexpected error occurred" });
-    }
+    const contractors = await userModel.getAllContractors(
+      pageNumber,
+      limitNumber,
+      companyNo,
+      storeNo,
+      minContractorNo,
+      maxContractorNo,
+      contractorFirstName,
+      contractorFirstNameFurigana,
+      contractorLastName,
+      contractorLastNameFurigana
+    );
+
+    return res.status(200).json(contractors);
+  } catch (error: any) {
+    console.error("Error fetching contractors:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAllAdministrators = async (req: Request, res: Response) => {
+  const {
+    page,
+    limit,
+    company_no,
+    store_no,
+    admin_no_min,
+    admin_no_max,
+    admin_name_first,
+    admin_name_furigana_first,
+    admin_name_last,
+    admin_name_furigana_last,
+  } = req.query;
+
+  // Ensure that page and limit are valid numbers
+  const pageNumber = isNaN(Number(page)) ? 1 : Number(page);
+  const limitNumber = isNaN(Number(limit)) ? 10 : Number(limit);
+  const companyNo = company_no ? Number(company_no) : "";
+  const storeNo = store_no ? Number(store_no) : "";
+  const minAdminNo = admin_no_min ? Number(admin_no_min) : "";
+  const maxAdminNo = admin_no_max ? Number(admin_no_max) : "";
+  const adminFirstName =
+    typeof admin_name_first === "string" ? admin_name_first : "";
+  const adminFirstNameFurigana =
+    typeof admin_name_furigana_first === "string"
+      ? admin_name_furigana_first
+      : "";
+  const adminLastName =
+    typeof admin_name_last === "string" ? admin_name_last : "";
+  const adminLastNameFurigana =
+    typeof admin_name_furigana_last === "string"
+      ? admin_name_furigana_last
+      : "";
+
+  try {
+    const administrators = await userModel.getAllAdministrators(
+      pageNumber,
+      limitNumber,
+      companyNo,
+      storeNo,
+      minAdminNo,
+      maxAdminNo,
+      adminFirstName,
+      adminFirstNameFurigana,
+      adminLastName,
+      adminLastNameFurigana
+    );
+
+    return res.status(200).json(administrators);
+  } catch (error: any) {
+    console.error("Error fetching administrators:", error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -317,19 +471,6 @@ export const getAdministratorsAuth = async (req: Request, res: Response) => {
       res
         .status(500)
         .json({ success: false, message: "An unexpected error occurred." });
-    }
-  }
-};
-
-export const getAllAdministrators = async (req: Request, res: Response) => {
-  try {
-    const users = await userModel.getAllAdministrators();
-    res.status(200).json(users);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "An unexpected error occurred" });
     }
   }
 };

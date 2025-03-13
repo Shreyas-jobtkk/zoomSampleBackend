@@ -205,7 +205,79 @@ export const restoreUsers = async (user_nos: number[]) => {
   }
 };
 
-export const getAllInterpreters = async (): Promise<User[]> => {
+export const getAllInterpreters = async (
+  page: number,
+  limit: number,
+  company_no: number | string,
+  store_no: number | string,
+  interpreter_no_min: number | string,
+  interpreter_no_max: number | string,
+  interpreter_name_first: string,
+  interpreter_name_furigana_first: string,
+  interpreter_name_last: string,
+  interpreter_name_furigana_last: string,
+  interpreter_languages: string[] = []
+): Promise<{ totalRecords: number; interpreters: User[] }> => {
+  console.log(777, interpreter_languages);
+  const values: any[] = [];
+  const conditions: string[] = ["user_info.user_type = 'interpreter'"];
+
+  if (company_no) {
+    values.push(company_no);
+    conditions.push(`store_info.company_no = $${values.length}`);
+  }
+
+  if (store_no) {
+    values.push(store_no);
+
+    console.log(377, values);
+    conditions.push(`user_info.store_no = $${values.length}`);
+  }
+  if (interpreter_no_min) {
+    values.push(interpreter_no_min);
+    console.log(177, values);
+    conditions.push(`user_info.user_no >= $${values.length}`);
+  }
+  if (interpreter_no_max) {
+    values.push(interpreter_no_max);
+    conditions.push(`user_info.user_no <= $${values.length}`);
+  }
+  if (interpreter_name_first) {
+    values.push(`%${interpreter_name_first}%`);
+    conditions.push(`user_info.user_name_first ILIKE $${values.length}`);
+  }
+  if (interpreter_name_furigana_first) {
+    values.push(`%${interpreter_name_furigana_first}%`);
+    conditions.push(
+      `user_info.user_name_first_furigana ILIKE $${values.length}`
+    );
+  }
+  if (interpreter_name_last) {
+    values.push(`%${interpreter_name_last}%`);
+    conditions.push(`user_info.user_name_last ILIKE $${values.length}`);
+  }
+  if (interpreter_name_furigana_last) {
+    values.push(`%${interpreter_name_furigana_last}%`);
+    conditions.push(
+      `user_info.user_name_last_furigana ILIKE $${values.length}`
+    );
+  }
+  if (interpreter_name_furigana_last) {
+    values.push(`%${interpreter_name_furigana_last}%`);
+    conditions.push(
+      `user_info.user_name_last_furigana ILIKE $${values.length}`
+    );
+  }
+
+  // **Filter by interpreter_languages**: Ensure all selected languages are included in translate_languages
+  if (interpreter_languages.length > 0) {
+    values.push(interpreter_languages.map(Number)); // Ensures all values are integers
+    conditions.push(`translate_languages @> $${values.length}::int[]`);
+  }
+
+  const whereClause =
+    conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
   const query = `
     SELECT 
       user_info.*, 
@@ -222,17 +294,43 @@ export const getAllInterpreters = async (): Promise<User[]> => {
       company_info
     ON 
       store_info.company_no = company_info.company_no AND company_info.company_deleted = false
-    WHERE 
-      user_info.user_type = 'interpreter'
+    ${whereClause}
     ORDER BY 
-      user_info.store_no;
+      user_info.store_no
+    LIMIT $${values.length + 1} OFFSET $${values.length + 2};
   `;
 
+  const countQuery = `
+    SELECT COUNT(*) 
+    FROM 
+      user_info
+    JOIN 
+      store_info
+    ON 
+      user_info.store_no = store_info.store_no AND store_info.store_delete = false
+    JOIN 
+      company_info
+    ON 
+      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
+    ${whereClause};
+  `;
+
+  values.push(limit, (page - 1) * limit);
+
   try {
-    const result = await pool.query(query);
-    return result.rows;
+    // Get interpreters data
+    const result = await pool.query(query, values);
+    const totalRecordsResult = await pool.query(
+      countQuery,
+      values.slice(0, -2)
+    );
+
+    // console.log(277, result.rows);
+
+    const totalRecords = parseInt(totalRecordsResult.rows[0].count, 10);
+    return { totalRecords, interpreters: result.rows };
   } catch (err) {
-    throw new Error("Failed to fetch users.");
+    throw new Error("Failed to fetch interpreters.");
   }
 };
 
@@ -265,38 +363,175 @@ export const getAllInterpretersLanguagesId = async (): Promise<User[]> => {
   }
 };
 
-export const getAllContractors = async (): Promise<User[]> => {
-  const query = `
-    SELECT 
-      user_info.*, 
-      store_info.store_name,
-      store_info.company_no,
-      company_info.company_name
-    FROM 
-      user_info
-    JOIN 
-      store_info
-    ON 
-      user_info.store_no = store_info.store_no AND store_info.store_delete = false
-    JOIN 
-      company_info
-    ON 
-      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
-    WHERE 
-      user_info.user_type = 'contractor'
-    ORDER BY 
-      user_info.store_no;
-  `;
-
+export const getAllContractors = async (
+  page: number,
+  limit: number,
+  company_no: number | string,
+  store_no: number | string,
+  contractor_no_min: number | string,
+  contractor_no_max: number | string,
+  contractor_name_first: string,
+  contractor_name_furigana_first: string,
+  contractor_name_last: string,
+  contractor_name_furigana_last: string
+) => {
   try {
-    const result = await pool.query(query);
-    return result.rows;
-  } catch (err) {
-    throw new Error("Failed to fetch users.");
+    const values: any[] = [];
+    const conditions: string[] = [];
+
+    // Apply company_no filter
+    if (company_no !== "") {
+      values.push(company_no);
+      conditions.push(`company_info.company_no = $${values.length}`);
+    }
+
+    // Apply store_no filter
+    if (store_no !== "") {
+      values.push(store_no);
+      conditions.push(`user_info.store_no = $${values.length}`);
+    }
+
+    // Apply contractor_no filters
+    if (contractor_no_min !== "" && contractor_no_max !== "") {
+      values.push(contractor_no_min, contractor_no_max);
+      conditions.push(
+        `user_info.user_no BETWEEN $${values.length - 1} AND $${values.length}`
+      );
+    } else if (contractor_no_min !== "") {
+      values.push(contractor_no_min);
+      conditions.push(`user_info.user_no >= $${values.length}`);
+    } else if (contractor_no_max !== "") {
+      values.push(contractor_no_max);
+      conditions.push(`user_info.user_no <= $${values.length}`);
+    }
+
+    // Apply name filters
+    if (contractor_name_first) {
+      values.push(`%${contractor_name_first}%`);
+      conditions.push(`user_info.user_name_first ILIKE $${values.length}`);
+    }
+    if (contractor_name_furigana_first) {
+      values.push(`%${contractor_name_furigana_first}%`);
+      conditions.push(
+        `user_info.user_name_first_furigana ILIKE $${values.length}`
+      );
+    }
+    if (contractor_name_last) {
+      values.push(`%${contractor_name_last}%`);
+      conditions.push(`user_info.user_name_last ILIKE $${values.length}`);
+    }
+    if (contractor_name_furigana_last) {
+      values.push(`%${contractor_name_furigana_last}%`);
+      conditions.push(
+        `user_info.user_name_last_furigana ILIKE $${values.length}`
+      );
+    }
+
+    // Prepare the count query
+    let countQuery = `
+      SELECT COUNT(*) FROM user_info
+      JOIN store_info ON user_info.store_no = store_info.store_no AND store_info.store_delete = false
+      JOIN company_info ON store_info.company_no = company_info.company_no AND company_info.company_deleted = false
+      WHERE user_info.user_type = 'contractor'
+    `;
+
+    if (conditions.length > 0) {
+      countQuery += ` AND ${conditions.join(" AND ")}`;
+    }
+
+    // Execute the count query
+    const countResult = await pool.query(countQuery, values);
+    const totalRecords = parseInt(countResult.rows[0].count, 10);
+
+    // Prepare the data query
+    let dataQuery = `
+      SELECT 
+        user_info.*, 
+        store_info.store_name, 
+        store_info.company_no, 
+        company_info.company_name
+      FROM user_info
+      JOIN store_info ON user_info.store_no = store_info.store_no AND store_info.store_delete = false
+      JOIN company_info ON store_info.company_no = company_info.company_no AND company_info.company_deleted = false
+      WHERE user_info.user_type = 'contractor'
+    `;
+
+    let dataValues = [...values];
+
+    if (conditions.length > 0) {
+      dataQuery += ` AND ${conditions.join(" AND ")}`;
+    }
+
+    // Pagination
+    const offset = (page - 1) * limit;
+    dataValues.push(limit, offset);
+    dataQuery += ` ORDER BY user_info.store_no ASC LIMIT $${dataValues.length - 1} OFFSET $${dataValues.length}`;
+
+    // Execute the data query
+    const result = await pool.query(dataQuery, dataValues);
+    console.log(155, totalRecords);
+    return { totalRecords, contractors: result.rows };
+  } catch (err: any) {
+    console.error("Error fetching contractors:", err.message);
+    throw new Error("Failed to fetch contractors.");
   }
 };
 
-export const getAllAdministrators = async (): Promise<User[]> => {
+export const getAllAdministrators = async (
+  page: number,
+  limit: number,
+  company_no: number | string,
+  store_no: number | string,
+  admin_no_min: number | string,
+  admin_no_max: number | string,
+  admin_name_first: string,
+  admin_name_furigana_first: string,
+  admin_name_last: string,
+  admin_name_furigana_last: string
+): Promise<{ totalRecords: number; administrators: User[] }> => {
+  const values: any[] = [];
+  const conditions: string[] = ["user_info.user_type = 'administrator'"];
+
+  if (company_no) {
+    values.push(company_no);
+    conditions.push(`store_info.company_no = $${values.length}`);
+  }
+  if (store_no) {
+    values.push(store_no);
+    conditions.push(`user_info.store_no = $${values.length}`);
+  }
+  if (admin_no_min) {
+    values.push(admin_no_min);
+    conditions.push(`user_info.user_no >= $${values.length}`);
+  }
+  if (admin_no_max) {
+    values.push(admin_no_max);
+    conditions.push(`user_info.user_no <= $${values.length}`);
+  }
+  if (admin_name_first) {
+    values.push(`%${admin_name_first}%`);
+    conditions.push(`user_info.user_name_first ILIKE $${values.length}`);
+  }
+  if (admin_name_furigana_first) {
+    values.push(`%${admin_name_furigana_first}%`);
+    conditions.push(
+      `user_info.user_name_first_furigana ILIKE $${values.length}`
+    );
+  }
+  if (admin_name_last) {
+    values.push(`%${admin_name_last}%`);
+    conditions.push(`user_info.user_name_last ILIKE $${values.length}`);
+  }
+  if (admin_name_furigana_last) {
+    values.push(`%${admin_name_furigana_last}%`);
+    conditions.push(
+      `user_info.user_name_last_furigana ILIKE $${values.length}`
+    );
+  }
+
+  const whereClause =
+    conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
   const query = `
     SELECT 
       user_info.*, 
@@ -313,17 +548,41 @@ export const getAllAdministrators = async (): Promise<User[]> => {
       company_info
     ON 
       store_info.company_no = company_info.company_no AND company_info.company_deleted = false
-    WHERE 
-      user_info.user_type = 'administrator'
+    ${whereClause}
     ORDER BY 
-      user_info.store_no;
+      user_info.store_no
+    LIMIT $${values.length + 1} OFFSET $${values.length + 2};
   `;
 
+  const countQuery = `
+    SELECT COUNT(*) 
+    FROM 
+      user_info
+    JOIN 
+      store_info
+    ON 
+      user_info.store_no = store_info.store_no AND store_info.store_delete = false
+    JOIN 
+      company_info
+    ON 
+      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
+    ${whereClause};
+  `;
+
+  values.push(limit, (page - 1) * limit);
+
   try {
-    const result = await pool.query(query);
-    return result.rows;
+    // Get administrators data
+    const result = await pool.query(query, values);
+    const totalRecordsResult = await pool.query(
+      countQuery,
+      values.slice(0, -2)
+    );
+
+    const totalRecords = parseInt(totalRecordsResult.rows[0].count, 10);
+    return { totalRecords, administrators: result.rows };
   } catch (err) {
-    throw new Error("Failed to fetch users.");
+    throw new Error("Failed to fetch administrators.");
   }
 };
 

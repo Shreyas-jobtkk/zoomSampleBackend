@@ -87,8 +87,39 @@ export const restoreCompanies = async (req: Request, res: Response) => {
 };
 
 export const getCompanies = async (req: Request, res: Response) => {
+  console.log(1889, req.query);
+
+  // Destructuring query parameters with fallback values
+  const {
+    page,
+    limit,
+    company_no_min,
+    company_no_max,
+    company_name,
+    company_name_furigana,
+  } = req.query;
+
+  // Ensure that page and limit are valid numbers
+  const pageNumber = isNaN(Number(page)) ? 1 : Number(page);
+  const limitNumber = isNaN(Number(limit)) ? 10 : Number(limit);
+  const minCompanyNo = company_no_min ? Number(company_no_min) : "";
+  const maxCompanyNo = company_no_max ? Number(company_no_max) : "";
+  const companyName = typeof company_name === "string" ? company_name : "";
+  const companyNameFurigana =
+    typeof company_name_furigana === "string" ? company_name_furigana : "";
+
   try {
-    const companies = await companyModel.getAllCompanies();
+    const companies = await companyModel.getAllCompanies(
+      pageNumber,
+      limitNumber,
+      minCompanyNo,
+      maxCompanyNo,
+      companyName,
+      companyNameFurigana
+    );
+
+    // console.log(2889, companies);
+
     res.status(200).json(companies);
   } catch (error: any) {
     res.status(500).json({ message: error.message });

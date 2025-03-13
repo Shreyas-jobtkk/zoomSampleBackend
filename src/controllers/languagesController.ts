@@ -21,15 +21,39 @@ export const createLanguage = async (
 };
 
 // Get all languages
-export const getAllLanguages = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const getAllLanguages = async (req: Request, res: Response) => {
+  console.log("Fetching languages with query:", req.query);
+
+  const {
+    page,
+    limit,
+    language_no_min,
+    language_no_max,
+    language_name,
+    language_name_furigana,
+  } = req.query;
+
+  const pageNumber = isNaN(Number(page)) ? 1 : Number(page);
+  const limitNumber = isNaN(Number(limit)) ? 10 : Number(limit);
+  const minLanguageNo = language_no_min ? Number(language_no_min) : "";
+  const maxLanguageNo = language_no_max ? Number(language_no_max) : "";
+  const languageName = typeof language_name === "string" ? language_name : "";
+  const languageNameFurigana =
+    typeof language_name_furigana === "string" ? language_name_furigana : "";
+
   try {
-    const languages = await languagesModel.getAllLanguages();
-    return res.status(200).json(languages);
-  } catch (error) {
-    return res.status(500).json({ message: (error as Error).message });
+    const languages = await languagesModel.getAllLanguages(
+      pageNumber,
+      limitNumber,
+      minLanguageNo,
+      maxLanguageNo,
+      languageName,
+      languageNameFurigana
+    );
+
+    res.status(200).json(languages);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };
 

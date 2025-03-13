@@ -91,19 +91,43 @@ export const getAllStoresController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
+  console.log("Request Query:", req.query);
+
+  const {
+    page,
+    limit,
+    company_no,
+    store_no_min,
+    store_no_max,
+    store_name,
+    store_name_furigana,
+  } = req.query;
+
+  // Ensure that page and limit are valid numbers
+  const pageNumber = isNaN(Number(page)) ? 1 : Number(page);
+  const limitNumber = isNaN(Number(limit)) ? 10 : Number(limit);
+  const companyNo = company_no ? Number(company_no) : "";
+  const minStoreNo = store_no_min ? Number(store_no_min) : "";
+  const maxStoreNo = store_no_max ? Number(store_no_max) : "";
+  const storeName = typeof store_name === "string" ? store_name : "";
+  const storeNameFurigana =
+    typeof store_name_furigana === "string" ? store_name_furigana : "";
+
   try {
-    const stores = await storeModel.getAllStores();
+    const stores = await storeModel.getAllStores(
+      pageNumber,
+      limitNumber,
+      companyNo,
+      minStoreNo,
+      maxStoreNo,
+      storeName,
+      storeNameFurigana
+    );
 
-    if (stores.length === 0) {
-      return res.status(404).json({
-        message: "No stores found",
-      });
-    }
-
-    return res.status(200).json(stores); // Return the list of stores
-  } catch (err: any) {
-    console.error("Error fetching stores:", err);
-    return res.status(500).send("Server error");
+    return res.status(200).json(stores);
+  } catch (error: any) {
+    console.error("Error fetching stores:", error);
+    return res.status(500).json({ message: error.message });
   }
 };
 

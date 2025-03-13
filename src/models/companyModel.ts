@@ -85,12 +85,70 @@ export const restoreCompanies = async (company_nos: number[]) => {
   }
 };
 
-export const getAllCompanies = async () => {
+export const getAllCompanies = async (
+  page: number,
+  limit: number,
+  company_no_min: number | string,
+  company_no_max: number | string,
+  company_name: string,
+  company_name_furigana: string
+) => {
   try {
-    const result = await pool.query("SELECT * FROM company_info");
-    return result.rows;
+    const values: any[] = [];
+    const conditions: string[] = [];
+
+    // Apply filters dynamically
+    if (company_no_min !== "" && company_no_max !== "") {
+      values.push(company_no_min, company_no_max);
+      conditions.push(
+        `company_no BETWEEN $${values.length - 1} AND $${values.length}`
+      );
+    } else if (company_no_min !== "") {
+      values.push(company_no_min);
+      conditions.push(`company_no >= $${values.length}`);
+    } else if (company_no_max !== "") {
+      values.push(company_no_max);
+      conditions.push(`company_no <= $${values.length}`);
+    }
+
+    if (company_name) {
+      values.push(`%${company_name}%`);
+      conditions.push(`company_name ILIKE $${values.length}`);
+    }
+
+    if (company_name_furigana) {
+      values.push(`%${company_name_furigana}%`);
+      conditions.push(`company_name_furigana ILIKE $${values.length}`);
+    }
+
+    // Prepare the count query
+    let countQuery = "SELECT COUNT(*) FROM company_info";
+    if (conditions.length > 0) {
+      countQuery += ` WHERE ${conditions.join(" AND ")}`;
+    }
+
+    // Execute the count query to get the total number of records
+    const countResult = await pool.query(countQuery, values);
+    const totalRecords = parseInt(countResult.rows[0].count, 10);
+
+    // Now prepare the query to fetch the paginated data
+    let dataQuery = "SELECT * FROM company_info";
+    let dataValues = [...values]; // Copy the values array to avoid mutation
+
+    if (conditions.length > 0) {
+      dataQuery += ` WHERE ${conditions.join(" AND ")}`;
+    }
+
+    // Pagination
+    const offset = (page - 1) * limit;
+    dataValues.push(limit, offset);
+    dataQuery += ` ORDER BY company_no ASC LIMIT $${dataValues.length - 1} OFFSET $${dataValues.length}`;
+
+    // Execute the data query to get the actual records
+    const result = await pool.query(dataQuery, dataValues);
+    return { totalRecords, companies: result.rows };
   } catch (err: any) {
-    console.error("Error fetching all companies:", err.message);
+    console.error("Error fetching companies:", err.message);
     throw new Error("Failed to fetch companies.");
   }
 };
