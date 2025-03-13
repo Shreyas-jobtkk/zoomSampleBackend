@@ -35,10 +35,42 @@ export const createCallLog = async (req: Request, res: Response) => {
   }
 };
 
-export const getCallLogData = async (req: Request, res: Response) => {
+export const getCallLogs = async (req: Request, res: Response) => {
+  console.log(7777, req.query);
+  // Destructuring query parameters with fallback values
+  const {
+    page,
+    limit,
+    contract_no,
+    interpreter_no,
+    lang_no,
+    start_time,
+    end_time,
+  } = req.query;
+
+  // Ensure page and limit are valid numbers
+  const pageNumber = isNaN(Number(page)) ? 1 : Number(page);
+  const limitNumber = isNaN(Number(limit)) ? 10 : Number(limit);
+  const contractNo = contract_no ? Number(contract_no) : "";
+  const interpreterNo = interpreter_no ? Number(interpreter_no) : "";
+  const langNo = typeof lang_no === "string" ? lang_no : "";
+  const startTime: Date | string =
+    typeof start_time === "string" ? new Date(start_time) : "";
+  const endTime: Date | string =
+    typeof end_time === "string" ? new Date(end_time) : "";
+
   try {
-    const callLogData = await callLogModel.getCallLogData();
-    res.status(200).json(callLogData);
+    const callLogs = await callLogModel.getAllCallLogs(
+      pageNumber,
+      limitNumber,
+      contractNo,
+      interpreterNo,
+      langNo,
+      startTime,
+      endTime
+    );
+
+    res.status(200).json(callLogs);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

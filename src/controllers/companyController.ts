@@ -87,8 +87,6 @@ export const restoreCompanies = async (req: Request, res: Response) => {
 };
 
 export const getCompanies = async (req: Request, res: Response) => {
-  // console.log(1889, req.query);
-
   // Destructuring query parameters with fallback values
   const {
     page,

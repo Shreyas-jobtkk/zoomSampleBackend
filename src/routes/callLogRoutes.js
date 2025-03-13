@@ -8,6 +8,6 @@ const router = express.Router();
 // router.get("/:company_no", callLogController.getCompany); // Get a single company by ID
 router.post("/", callLogController.createCallLog); // Create a new company
 // router.delete("/", callLogController.deleteCompanies); // Delete companies
-router.get("/", callLogController.getCallLogData); // Get all companies
+router.get("/", callLogController.getCallLogs); // Get all companies
 
 export default router;

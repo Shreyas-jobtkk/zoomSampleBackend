@@ -43,50 +43,100 @@ export const createCallLog = async (callLogData: CallLogData) => {
   }
 };
 
-export const getCallLogData = async () => {
-  const query = `
-  SELECT 
-      cli.*,  -- Select all columns from call_log_info
-      lsi.language_name, -- Fix column reference
-
-      -- Get interpreter's full name
-      CASE 
-          WHEN ui_interpreter.user_type = 'interpreter' THEN CONCAT(ui_interpreter.user_name_first, ' ', ui_interpreter.user_name_last)
-          ELSE NULL
-      END AS interpreter_name,
-
-      -- Get contractor's details (only if user_type is 'contractor')
-      CASE 
-          WHEN ui_contract.user_type = 'contractor' THEN 
-              CONCAT(ui_contract.user_name_first, ' ', ui_contract.user_name_last)
-          ELSE NULL
-      END AS contract_name,
-
-      si_contract.store_name AS contract_store_name,
-      ci_contract.company_name AS contract_company_name
-
-  FROM call_log_info AS cli
-  LEFT JOIN user_info AS ui_interpreter 
-      ON cli.interpreter_no = ui_interpreter.user_no
-  LEFT JOIN user_info AS ui_contract 
-      ON cli.contract_no = ui_contract.user_no
-  LEFT JOIN store_info AS si_contract 
-      ON ui_contract.store_no = si_contract.store_no  -- Corrected the join condition
-  LEFT JOIN company_info AS ci_contract 
-      ON si_contract.company_no = ci_contract.company_no
-  LEFT JOIN languages_support_info AS lsi
-      ON cli.language_support_no = lsi.languages_support_no  -- Added a proper join condition
-
-  WHERE ui_contract.user_type = 'contractor' OR ui_contract.user_type IS NULL;
-
-
-
-   `;
+export const getAllCallLogs = async (
+  page: number,
+  limit: number,
+  contract_no: number | string,
+  interpreter_no: number | string,
+  lang_no: string,
+  start_time: Date | string,
+  end_time: Date | string
+) => {
+  console.log(155, start_time, end_time);
   try {
-    const result = await pool.query(query);
-    return result.rows;
+    const values: any[] = [];
+    const conditions: string[] = [];
+
+    // Apply filters dynamically
+    if (contract_no !== "") {
+      values.push(contract_no);
+      conditions.push(`cli.contract_no = $${values.length}`);
+    }
+
+    if (interpreter_no !== "") {
+      values.push(interpreter_no);
+      conditions.push(`cli.interpreter_no = $${values.length}`);
+    }
+
+    if (lang_no) {
+      values.push(lang_no);
+      conditions.push(`cli.language_support_no = $${values.length}`);
+    }
+
+    if (start_time && !isNaN(new Date(start_time).getTime())) {
+      values.push(start_time);
+      conditions.push(`cli.call_start >= $${values.length}`);
+    }
+
+    if (end_time && !isNaN(new Date(end_time).getTime())) {
+      values.push(end_time);
+      conditions.push(`cli.call_end <= $${values.length}`);
+    }
+
+    // Prepare the count query
+    let countQuery = `SELECT COUNT(*) FROM call_log_info AS cli`;
+    if (conditions.length > 0) {
+      countQuery += ` WHERE ${conditions.join(" AND ")}`;
+    }
+
+    const countResult = await pool.query(countQuery, values);
+    const totalRecords = parseInt(countResult.rows[0].count, 10);
+
+    // Prepare the main data query
+    let dataQuery = `
+      SELECT 
+          cli.*, 
+          lsi.language_name, 
+          CASE 
+              WHEN ui_interpreter.user_type = 'interpreter' 
+              THEN CONCAT(ui_interpreter.user_name_first, ' ', ui_interpreter.user_name_last) 
+              ELSE NULL 
+          END AS interpreter_name,
+          CASE 
+              WHEN ui_contract.user_type = 'contractor' 
+              THEN CONCAT(ui_contract.user_name_first, ' ', ui_contract.user_name_last) 
+              ELSE NULL 
+          END AS contract_name,
+          si_contract.store_name AS contract_store_name,
+          ci_contract.company_name AS contract_company_name
+      FROM call_log_info AS cli
+      LEFT JOIN user_info AS ui_interpreter 
+          ON cli.interpreter_no = ui_interpreter.user_no
+      LEFT JOIN user_info AS ui_contract 
+          ON cli.contract_no = ui_contract.user_no
+      LEFT JOIN store_info AS si_contract 
+          ON ui_contract.store_no = si_contract.store_no
+      LEFT JOIN company_info AS ci_contract 
+          ON si_contract.company_no = ci_contract.company_no
+      LEFT JOIN languages_support_info AS lsi
+          ON cli.language_support_no = lsi.languages_support_no
+    `;
+
+    if (conditions.length > 0) {
+      dataQuery += ` WHERE ${conditions.join(" AND ")}`;
+    }
+
+    // Pagination
+    const offset = (page - 1) * limit;
+    values.push(limit, offset);
+    dataQuery += ` ORDER BY cli.call_start DESC LIMIT $${values.length - 1} OFFSET $${values.length}`;
+
+    // Execute the query
+    const result = await pool.query(dataQuery, values);
+    // console.log(7777, result.rows);
+    return { totalRecords, callLogs: result.rows };
   } catch (err: any) {
-    console.error("Error fetching all call_log_info:", err.message);
-    throw new Error("Failed to fetch call_log_info.");
+    console.error("Error fetching call logs:", err.message);
+    throw new Error("Failed to fetch call logs.");
   }
 };
