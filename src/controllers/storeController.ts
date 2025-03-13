@@ -91,7 +91,7 @@ export const getAllStoresController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  console.log("Request Query:", req.query);
+  // console.log("Request Query:", req.query);
 
   const {
     page,

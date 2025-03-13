@@ -5,7 +5,7 @@ import { Language, LanguageWithId } from "../types/languageSupportTypes";
 export const createLanguage = async (
   languageData: Language
 ): Promise<LanguageWithId> => {
-  // console.log(333, languageData);
+  // // console.log(333, languageData);
   const { language_name, language_name_furigana, language_note } = languageData;
   try {
     const result = await pool.query(
@@ -13,7 +13,7 @@ export const createLanguage = async (
       VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false) RETURNING *`,
       [language_name, language_name_furigana, language_note]
     );
-    // console.log(333, languageData, result.rows[0]);
+    // // console.log(333, languageData, result.rows[0]);
     return result.rows[0]; // TypeScript automatically infers the type based on the result
   } catch (err) {
     throw new Error("Failed to insert language.");

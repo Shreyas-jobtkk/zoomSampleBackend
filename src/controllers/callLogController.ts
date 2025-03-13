@@ -3,7 +3,7 @@ import * as callLogModel from "../models/callLogModel";
 import { CallLogData } from "../types/callLogTypes";
 
 export const createCallLog = async (req: Request, res: Response) => {
-  // console.log(158, req.body);
+  // // console.log(158, req.body);
   const {
     interpreter_no,
     languages_support_no,

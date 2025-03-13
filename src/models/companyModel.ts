@@ -2,7 +2,7 @@ import pool from "../db.js";
 import { CompanyData } from "../types/companyTypes";
 
 export const createCompany = async (companyData: CompanyData) => {
-  console.log(157, companyData);
+  // console.log(157, companyData);
   const { company_name, company_name_furigana, company_note } = companyData;
   try {
     const result = await pool.query(
@@ -154,7 +154,6 @@ export const getAllCompanies = async (
 };
 
 export const getCompanyNumbersAndNames = async () => {
-  console.log(8912);
   try {
     const result = await pool.query(
       "SELECT company_no, company_name FROM company_info WHERE company_deleted = false"

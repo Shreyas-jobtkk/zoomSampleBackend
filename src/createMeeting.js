@@ -46,7 +46,7 @@ async function getAccessToken() {
 }
 
 export async function createMeeting() {
-  console.log(155);
+  // console.log(155);
   // Call the function to get the access token
   await getAccessToken(); // Wait for the access token to be set
 
@@ -67,10 +67,10 @@ export async function createMeeting() {
       },
     });
 
-    // console.log("Meeting start_url:", response.data.start_url);
-    // console.log("Meeting join_url:", response.data.join_url);
+    // // console.log("Meeting start_url:", response.data.start_url);
+    // // console.log("Meeting join_url:", response.data.join_url);
 
-    console.log(889, response.data);
+    // console.log(889, response.data);
 
     // const startUrl = response.data.start_url;
     // const joinUrl = response.data.join_url;

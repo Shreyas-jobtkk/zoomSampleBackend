@@ -22,7 +22,7 @@ export const createLanguage = async (
 
 // Get all languages
 export const getAllLanguages = async (req: Request, res: Response) => {
-  console.log("Fetching languages with query:", req.query);
+  // console.log("Fetching languages with query:", req.query);
 
   const {
     page,

@@ -218,7 +218,7 @@ export const getAllInterpreters = async (
   interpreter_name_furigana_last: string,
   interpreter_languages: string[] = []
 ): Promise<{ totalRecords: number; interpreters: User[] }> => {
-  console.log(777, interpreter_languages);
+  // console.log(777, interpreter_languages);
   const values: any[] = [];
   const conditions: string[] = ["user_info.user_type = 'interpreter'"];
 
@@ -230,12 +230,12 @@ export const getAllInterpreters = async (
   if (store_no) {
     values.push(store_no);
 
-    console.log(377, values);
+    // console.log(377, values);
     conditions.push(`user_info.store_no = $${values.length}`);
   }
   if (interpreter_no_min) {
     values.push(interpreter_no_min);
-    console.log(177, values);
+    // console.log(177, values);
     conditions.push(`user_info.user_no >= $${values.length}`);
   }
   if (interpreter_no_max) {
@@ -325,7 +325,7 @@ export const getAllInterpreters = async (
       values.slice(0, -2)
     );
 
-    // console.log(277, result.rows);
+    // // console.log(277, result.rows);
 
     const totalRecords = parseInt(totalRecordsResult.rows[0].count, 10);
     return { totalRecords, interpreters: result.rows };
@@ -469,7 +469,7 @@ export const getAllContractors = async (
 
     // Execute the data query
     const result = await pool.query(dataQuery, dataValues);
-    console.log(155, totalRecords);
+    // console.log(155, totalRecords);
     return { totalRecords, contractors: result.rows };
   } catch (err: any) {
     console.error("Error fetching contractors:", err.message);

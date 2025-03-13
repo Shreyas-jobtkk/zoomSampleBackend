@@ -1,7 +1,7 @@
 import pool from "../db.js"; // Import the database connection
 
 const updateUserStatus = async (userId, newStatus) => {
-  // // console.log(144,userId, newStatus)
+  // // // console.log(144,userId, newStatus)
   try {
     // Acquire a client from the pool
     const client = await pool.connect();
@@ -14,9 +14,9 @@ const updateUserStatus = async (userId, newStatus) => {
 
     // Check if the user was found and updated
     if (result.rowCount === 0) {
-      // console.log(`User with ID ${userId} not found.`); // Log if no user was found
+      // // console.log(`User with ID ${userId} not found.`); // Log if no user was found
     } else {
-      // // console.log(`User status updated successfully:`, result.rows[0]); // Log the updated user details
+      // // // console.log(`User status updated successfully:`, result.rows[0]); // Log the updated user details
     }
 
     // Release the client back to the pool

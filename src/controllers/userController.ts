@@ -61,7 +61,7 @@ export const getUserById = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
-  console.log(156, Number(req.params.userNo));
+  // console.log(156, Number(req.params.userNo));
 };
 
 export const updateUser = async (req: Request, res: Response) => {
@@ -177,7 +177,7 @@ export const restoreUsersController = async (
 };
 
 export const getAllInterpreters = async (req: Request, res: Response) => {
-  console.log("Request Query:", req.query);
+  // console.log("Request Query:", req.query);
   const {
     page,
     limit,
@@ -217,7 +217,7 @@ export const getAllInterpreters = async (req: Request, res: Response) => {
     Array.isArray(languages) &&
     languages.every((lang) => typeof lang === "string")
   ) {
-    console.log(444, languages);
+    // console.log(444, languages);
     interpreterLanguages = languages;
   }
 
@@ -369,7 +369,7 @@ export const getContractorsAuth = async (req: Request, res: Response) => {
     }
 
     const user = users[0];
-    console.log(155, user);
+    // console.log(155, user);
     const isPasswordValid = user_password === user.user_password;
 
     if (!isPasswordValid) {

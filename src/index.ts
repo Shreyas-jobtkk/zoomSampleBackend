@@ -22,7 +22,7 @@ pool.connect((err: any) => {
   if (err) {
     console.error("Error connecting to the database:", err.stack);
   } else {
-    // // console.log("Connected to the PostgreSQL database");
+    // // // console.log("Connected to the PostgreSQL database");
   }
 });
 
@@ -65,17 +65,17 @@ const getAllInterpretersLanguagesId = async () => {
 let reqUsers: any = [];
 
 io.on("connection", (socket) => {
-  // // // console.log('a user connected');
+  // // // // console.log('a user connected');
 
   socket.on("callRequest", async (data) => {
-    // // console.log(1557, data);
+    // // // console.log(1557, data);
 
     reqUsers.push(data);
-    // console.log(107, reqUsers);
+    // // console.log(107, reqUsers);
 
     while (reqUsers.length > 0) {
-      // // console.log(108, reqUsers[0].languageSupportNo);
-      // // console.log(1110, reqUsers);
+      // // // console.log(108, reqUsers[0].languageSupportNo);
+      // // // console.log(1110, reqUsers);
 
       // for (let i = 0; i < reqUsers.length; i++) {
       //   const processLanguageNo = reqUsers[i].languageSupportNo;
@@ -86,9 +86,9 @@ io.on("connection", (socket) => {
       //     ),
       //   ];
 
-      //   // // console.log(110, uniqueLanguages);
+      //   // // // console.log(110, uniqueLanguages);
       //   if (uniqueLanguages.includes(processLanguageNo)) {
-      //     // // console.log(109, interpreters);
+      //     // // // console.log(109, interpreters);
 
       //     const availableInterpreters = interpreters.filter((interpreter) =>
       //       interpreter.translate_languages.some(
@@ -96,9 +96,9 @@ io.on("connection", (socket) => {
       //       )
       //     );
 
-      //     // // console.log(45, reqUsers[i]);
-      //     // // console.log(158, availableInterpreters[0]);
-      //     // // console.log(245, await startZoomMeeting(reqUsers[i]));
+      //     // // // console.log(45, reqUsers[i]);
+      //     // // // console.log(158, availableInterpreters[0]);
+      //     // // // console.log(245, await startZoomMeeting(reqUsers[i]));
 
       //     const meetingJoinData = {
       //       contractorNo: reqUsers[i].contractorNo,
@@ -116,7 +116,7 @@ io.on("connection", (socket) => {
       //       }),
       //     };
 
-      //     // // console.log("beforeMatch", reqUsers);
+      //     // // // console.log("beforeMatch", reqUsers);
 
       //     reqUsers = reqUsers.filter(
       //       (item: any) => item.contractorNo !== reqUsers[i].contractorNo
@@ -127,7 +127,7 @@ io.on("connection", (socket) => {
       //       "inactive"
       //     );
 
-      //     // // console.log("afterMatch", reqUsers);
+      //     // // // console.log("afterMatch", reqUsers);
 
       //     io.emit("meetingJoinData", meetingJoinData);
       //     io.emit("meetingHostData", meetingHostData);
@@ -135,7 +135,7 @@ io.on("connection", (socket) => {
       // }
 
       for (const user of [...reqUsers]) {
-        // // console.log(189, user.contractorNo);
+        // // // console.log(189, user.contractorNo);
         // Clone the array to avoid mutation issues
         const processLanguageNo = user.languageSupportNo;
         const interpreters = await getAllInterpretersLanguagesId();
@@ -154,7 +154,7 @@ io.on("connection", (socket) => {
 
         if (availableInterpreters.length === 0) continue;
 
-        console.log(489, user);
+        // console.log(489, user);
 
         const interpreter = availableInterpreters[0];
 
@@ -175,13 +175,13 @@ io.on("connection", (socket) => {
           meetingNumber: user.meetingNumber,
         };
 
-        // // console.log("before", reqUsers);
+        // // // console.log("before", reqUsers);
 
         reqUsers = reqUsers.filter(
           (item: any) => item.contractorNo !== user.contractorNo
         );
 
-        // // console.log("after", reqUsers);
+        // // // console.log("after", reqUsers);
 
         // io.emit("meetingJoinData", meetingJoinData);
         io.emit("meetingHostData", meetingHostData);
@@ -200,7 +200,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("interpreterResponse", async (data) => {
-    // // console.log(589, data);
+    // // // console.log(589, data);
 
     const meetingJoinSignature = await startZoomMeeting({
       meetingNumber: data.meetingNumber,
@@ -218,13 +218,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("cancelCallRequest", async (data) => {
-    console.log(1557, data);
-    console.log(2557, reqUsers);
+    // console.log(1557, data);
+    // console.log(2557, reqUsers);
 
     const checkContractor = (arr: any, contractorNo: any) =>
       arr.some((item: any) => item.contractorNo === contractorNo);
 
-    console.log(777, checkContractor(reqUsers, data.contractorNo)); // true
+    // console.log(777, checkContractor(reqUsers, data.contractorNo)); // true
 
     if (checkContractor(reqUsers, data.contractorNo)) {
       reqUsers = reqUsers.filter(
@@ -234,9 +234,9 @@ io.on("connection", (socket) => {
       io.emit("cancelCallRequestFromServer", data);
     }
 
-    console.log(3557, reqUsers);
+    // console.log(3557, reqUsers);
 
-    // console.log(208, reqUsers);
+    // // console.log(208, reqUsers);
   });
 
   // function processArray(reqUsers: any) {
@@ -245,7 +245,7 @@ io.on("connection", (socket) => {
   //     return;
   //   }
 
-  //   // console.log(145, reqUsers.length);
+  //   // // console.log(145, reqUsers.length);
 
   //   // Recursive call with the remaining array
   //   return processArray(reqUsers);
@@ -258,7 +258,7 @@ io.on("connection", (socket) => {
 
   socket.on("meetingDetails", async (data) => {
     const { meetingNumber, password } = data;
-    // console.log(155, data);
+    // // console.log(155, data);
     // Dispatch the action to store the meeting details
     store.dispatch(setMeetingData({ meetingNumber, password }));
   });
@@ -291,7 +291,7 @@ io.on("connection", (socket) => {
 
 app.post("/reqMeeting", (req, res) => {
   const { meetingNumber, password } = req.body;
-  // console.log("Received from frontend:", meetingNumber, password);
+  // // console.log("Received from frontend:", meetingNumber, password);
   res.json({ success: true, message: "Meeting details received." });
 });
 
@@ -306,7 +306,7 @@ app.use("/callLog", callLogRoutes);
 
 // Endpoint to get meeting data
 app.get("/get-meeting-data", (req, res) => {
-  // // console.log("Fetching meeting data:", store.getState().app.meetingData);
+  // // // console.log("Fetching meeting data:", store.getState().app.meetingData);
   res.json(store.getState().app.meetingData);
 });
 
@@ -330,5 +330,5 @@ export { app, io };
 
 // Start the server
 server.listen(port, () => {
-  // // // console.log(`Server listening on port ${port}`);
+  // // // // console.log(`Server listening on port ${port}`);
 });

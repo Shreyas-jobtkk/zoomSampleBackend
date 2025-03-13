@@ -2,7 +2,7 @@ import pool from "../db.js";
 import { CallLogData } from "../types/callLogTypes";
 
 export const createCallLog = async (callLogData: CallLogData) => {
-  console.log(157, callLogData);
+  // console.log(157, callLogData);
 
   const {
     interpreter_no,

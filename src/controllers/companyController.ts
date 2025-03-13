@@ -5,7 +5,7 @@ import { CompanyData } from "../types/companyTypes";
 export const createCompany = async (req: Request, res: Response) => {
   const { company_name, company_name_furigana, company_note }: CompanyData =
     req.body;
-  console.log(156, req.body);
+  // console.log(156, req.body);
   try {
     const company = await companyModel.createCompany({
       company_name,
@@ -35,7 +35,7 @@ export const updateCompany = async (req: Request, res: Response) => {
   const company_no = Number(req.params.company_no);
   const { company_name, company_name_furigana, company_note }: CompanyData =
     req.body;
-  // console.log(2155, req.params, req.body);
+  // // console.log(2155, req.params, req.body);
   try {
     const company = await companyModel.updateCompany(company_no, {
       company_name,
@@ -52,9 +52,9 @@ export const updateCompany = async (req: Request, res: Response) => {
 };
 
 export const deleteCompanies = async (req: Request, res: Response) => {
-  // console.log(189, req.body);
+  // // console.log(189, req.body);
   const { company_nos } = req.body as { company_nos: number[] }; // Expecting an array of IDs
-  // console.log(1892, req.body);
+  // // console.log(1892, req.body);
   try {
     const deletedCompanies = await companyModel.deleteCompanies(company_nos);
     if (deletedCompanies.length === 0) {
@@ -87,7 +87,7 @@ export const restoreCompanies = async (req: Request, res: Response) => {
 };
 
 export const getCompanies = async (req: Request, res: Response) => {
-  console.log(1889, req.query);
+  // console.log(1889, req.query);
 
   // Destructuring query parameters with fallback values
   const {
@@ -118,7 +118,7 @@ export const getCompanies = async (req: Request, res: Response) => {
       companyNameFurigana
     );
 
-    // console.log(2889, companies);
+    // // console.log(2889, companies);
 
     res.status(200).json(companies);
   } catch (error: any) {

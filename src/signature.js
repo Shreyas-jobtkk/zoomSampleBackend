@@ -45,13 +45,13 @@ const getAllInterpretersLanguagesId = async () => {
 
 // io.on("connection", (socket) => {
 //   socket.on("callRequest", async (data) => {
-//     console.log(1557, data);
+//     // console.log(1557, data);
 
 //     io.emit("callRequestFromServer", data);
 //   });
 
 //   socket.on("cancelCallRequest", async (data) => {
-//     console.log(2557, data);
+//     // console.log(2557, data);
 
 //     io.emit("cancelCallRequestFromServer", data);
 //   });
@@ -79,7 +79,7 @@ const getAllInterpretersLanguagesId = async () => {
 //     expirationSeconds,
 //   } = requestBody;
 
-//   console.log(1578, contractorNo, languageSupportNo);
+//   // console.log(1578, contractorNo, languageSupportNo);
 //   const iat = Math.floor(Date.now() / 1000);
 //   const exp = expirationSeconds ? iat + expirationSeconds : iat + 60 * 60 * 2;
 //   const oHeader = { alg: "HS256", typ: "JWT" };
@@ -129,7 +129,7 @@ const startZoomMeeting = async (meetingInfo) => {
 
   const { meetingNumber, role, expirationSeconds } = requestBody;
 
-  // console.log(1578, contractorNo, languageSupportNo);
+  // // console.log(1578, contractorNo, languageSupportNo);
   const iat = Math.floor(Date.now() / 1000);
   const exp = expirationSeconds ? iat + expirationSeconds : iat + 60 * 60 * 2;
   const oHeader = { alg: "HS256", typ: "JWT" };

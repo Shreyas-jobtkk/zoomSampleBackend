@@ -60,7 +60,7 @@ export async function createMeeting() {
       },
     });
 
-    console.log(144, response.data);
+    // console.log(144, response.data);
 
     return { id: response.data.id, password: response.data.password };
   } catch (error) {
