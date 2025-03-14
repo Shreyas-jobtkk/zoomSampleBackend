@@ -67,6 +67,16 @@ let reqUsers: any = [];
 io.on("connection", (socket) => {
   // // // // console.log('a user connected');
 
+  socket.on("zoomMessage", async (data) => {
+    // // console.log(15678, data);
+    io.emit("streamMessage", data);
+  });
+
+  socket.on("zoomEmoji", async (data) => {
+    // // console.log(25678, data);
+    io.emit("zoomStreamEmoji", data);
+  });
+
   socket.on("callRequest", async (data) => {
     // // // console.log(1557, data);
 
@@ -324,7 +334,7 @@ app.get("/get-meeting-data", (req, res) => {
 
 // app.options('*', cors());
 
-handleWebSocket();
+// handleWebSocket();
 
 export { app, io };
 

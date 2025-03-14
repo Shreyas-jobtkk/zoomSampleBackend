@@ -50,7 +50,8 @@ export const getAllCallLogs = async (
   interpreter_no: number | string,
   lang_no: string,
   start_time: Date | string,
-  end_time: Date | string
+  end_time: Date | string,
+  call_status: string
 ) => {
   console.log(155, start_time, end_time);
   try {
@@ -71,6 +72,11 @@ export const getAllCallLogs = async (
     if (lang_no) {
       values.push(lang_no);
       conditions.push(`cli.language_support_no = $${values.length}`);
+    }
+
+    if (call_status) {
+      values.push(call_status);
+      conditions.push(`cli.call_status = $${values.length}`);
     }
 
     if (start_time && !isNaN(new Date(start_time).getTime())) {

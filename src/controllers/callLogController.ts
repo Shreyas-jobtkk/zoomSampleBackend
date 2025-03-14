@@ -46,6 +46,7 @@ export const getCallLogs = async (req: Request, res: Response) => {
     lang_no,
     start_time,
     end_time,
+    call_status,
   } = req.query;
 
   // Ensure page and limit are valid numbers
@@ -58,6 +59,7 @@ export const getCallLogs = async (req: Request, res: Response) => {
     typeof start_time === "string" ? new Date(start_time) : "";
   const endTime: Date | string =
     typeof end_time === "string" ? new Date(end_time) : "";
+  const callStatus = typeof call_status === "string" ? call_status : "";
 
   try {
     const callLogs = await callLogModel.getAllCallLogs(
@@ -67,7 +69,8 @@ export const getCallLogs = async (req: Request, res: Response) => {
       interpreterNo,
       langNo,
       startTime,
-      endTime
+      endTime,
+      callStatus
     );
 
     res.status(200).json(callLogs);
