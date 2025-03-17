@@ -2,6 +2,7 @@ import * as userModel from "../models/userModel";
 import { Request, Response } from "express";
 import { AuthBody } from "../types/userTypes";
 
+// Controller to create a new User
 export const createUserController = async (req: Request, res: Response) => {
   const {
     store_no,
@@ -50,6 +51,7 @@ export const createUserController = async (req: Request, res: Response) => {
   }
 };
 
+// Controller to get a User by its ID
 export const getUserByIdController = async (req: Request, res: Response) => {
   const userNo = Number(req.params.userNo);
   try {
@@ -64,6 +66,7 @@ export const getUserByIdController = async (req: Request, res: Response) => {
   // console.log(156, Number(req.params.userNo));
 };
 
+// Controller to update a User by its ID
 export const updateUserController = async (req: Request, res: Response) => {
   const userNo = Number(req.params.userNo);
   const {
@@ -109,6 +112,7 @@ export const updateUserController = async (req: Request, res: Response) => {
   }
 };
 
+// Controller to update Interpreters Status
 export const updateInterpretersStatusController = async (
   req: Request,
   res: Response
@@ -137,6 +141,7 @@ export const updateInterpretersStatusController = async (
   }
 };
 
+// Controller to delete User based on an array of company IDs
 export const deleteUsersController = async (req: Request, res: Response) => {
   // const { ids }: DeleteUsersBody = req.body; // Array of user IDs to delete
   const { user_nos } = req.body as { user_nos: number[] };
@@ -158,6 +163,7 @@ export const deleteUsersController = async (req: Request, res: Response) => {
   }
 };
 
+// Controller to restore deleted User based on an array of company IDs
 export const restoreUsersController = async (
   req: Request,
   res: Response
@@ -179,6 +185,7 @@ export const restoreUsersController = async (
   }
 };
 
+// Controller to get All Interpreters with optional query parameters for filtering and pagination
 export const getAllInterpretersController = async (
   req: Request,
   res: Response
@@ -252,6 +259,7 @@ export const getAllInterpretersController = async (
   }
 };
 
+// Controller to get All Contractors with optional query parameters for filtering and pagination
 export const getAllContractorsController = async (
   req: Request,
   res: Response
@@ -310,6 +318,7 @@ export const getAllContractorsController = async (
   }
 };
 
+// Controller to get All Administrators with optional query parameters for filtering and pagination
 export const getAllAdministratorsController = async (
   req: Request,
   res: Response
@@ -368,6 +377,7 @@ export const getAllAdministratorsController = async (
   }
 };
 
+// Controller to validate Contractors Authentication
 export const getContractorsAuthController = async (
   req: Request,
   res: Response
@@ -412,6 +422,7 @@ export const getContractorsAuthController = async (
   }
 };
 
+// Controller to validate Interpreters Authentication
 export const getInterpretersAuthController = async (
   req: Request,
   res: Response
@@ -454,6 +465,7 @@ export const getInterpretersAuthController = async (
   }
 };
 
+// Controller to validate Administrators Authentication
 export const getAdministratorsAuthController = async (
   req: Request,
   res: Response

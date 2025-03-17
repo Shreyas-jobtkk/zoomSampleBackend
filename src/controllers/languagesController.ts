@@ -20,7 +20,7 @@ export const createLanguageController = async (
   }
 };
 
-// Get all languages
+// Get all languages with pagination and filtering options
 export const getAllLanguagesController = async (
   req: Request,
   res: Response
@@ -60,29 +60,8 @@ export const getAllLanguagesController = async (
   }
 };
 
-// Get multiple languages by IDs
-export const getLanguagesByIdController = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-  const { ids } = req.body; // Expecting an array of IDs in the request body
-  if (!Array.isArray(ids) || ids.length === 0) {
-    return res.status(400).json({ message: "Invalid or missing IDs array" });
-  }
-
-  try {
-    const languages = await languagesModel.getLanguagesById(ids);
-    if (languages.length === 0) {
-      return res.status(404).json({ message: "No languages found" });
-    }
-    return res.status(200).json(languages);
-  } catch (error) {
-    return res.status(500).json({ message: (error as Error).message });
-  }
-};
-
 // Get a language by ID
-export const getLanguageController = async (
+export const getLanguageByIdController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
@@ -140,6 +119,7 @@ export const deleteLanguagesController = async (
   }
 };
 
+// restore deleted companies based on an array of company IDs
 export const restoreLanguagesController = async (
   req: Request,
   res: Response
@@ -163,7 +143,7 @@ export const restoreLanguagesController = async (
 };
 
 // Get only language_name and languages_support_no
-export const getLanguageNamesController = async (
+export const getLanguagesAllNamesController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {

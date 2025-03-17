@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import * as callLogModel from "../models/callLogModel";
 import { CallLogData } from "../types/callLogTypes";
 
+// Controller to create a new call log entry
 export const createCallLogController = async (req: Request, res: Response) => {
-  // // console.log(158, req.body);
   const {
     interpreter_no,
     languages_support_no,
@@ -17,6 +17,7 @@ export const createCallLogController = async (req: Request, res: Response) => {
   }: CallLogData = req.body;
 
   try {
+    // Call the model function to create a new call log in the database
     const callLog = await callLogModel.createCallLog({
       interpreter_no,
       languages_support_no,
@@ -35,6 +36,7 @@ export const createCallLogController = async (req: Request, res: Response) => {
   }
 };
 
+// Controller to fetch all call logs with optional query parameters
 export const getAllCallLogsController = async (req: Request, res: Response) => {
   console.log(7777, req.query);
   // Destructuring query parameters with fallback values

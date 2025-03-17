@@ -1,8 +1,6 @@
 import pool from "../db"; // Import the database connection pool
 import { StoreData, StoreDetails } from "../types/storeTypes";
 
-// Type definition for store details
-
 // Insert a new store
 export const createStore = async (
   storeData: StoreData
@@ -117,6 +115,7 @@ export const deleteStores = async (
   }
 };
 
+// Handle restoring deleting stores
 export const restoreStores = async (store_nos: number[]) => {
   const query = `
       UPDATE store_info

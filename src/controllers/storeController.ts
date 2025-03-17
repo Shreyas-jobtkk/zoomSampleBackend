@@ -65,6 +65,7 @@ export const deleteStoresController = async (
   }
 };
 
+// Handle restoring deleting stores
 export const restoreStoresController = async (
   req: Request,
   res: Response

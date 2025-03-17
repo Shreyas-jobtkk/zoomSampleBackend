@@ -1,6 +1,7 @@
 import pool from "../db.js";
 import { UpdateUserData, User, UserData } from "../types/userTypes";
 
+// create a new User
 export const createUser = async (userData: UserData): Promise<User> => {
   const {
     store_no,
@@ -60,6 +61,7 @@ export const createUser = async (userData: UserData): Promise<User> => {
   }
 };
 
+// get a User by its ID
 export const getUserById = async (userNo: number): Promise<User | null> => {
   const query = `
     SELECT 
@@ -89,6 +91,7 @@ export const getUserById = async (userNo: number): Promise<User | null> => {
   }
 };
 
+// update a User by its ID
 export const updateUser = async (
   id: number,
   userData: UpdateUserData
@@ -148,6 +151,7 @@ export const updateUser = async (
   }
 };
 
+// update Interpreters Status
 export const updateInterpretersStatus = async (
   interpreter_no: string,
   interpreter_status: string
@@ -172,6 +176,7 @@ export const updateInterpretersStatus = async (
   }
 };
 
+// delete User based on an array of company IDs
 export const deleteUsers = async (user_nos: number[]) => {
   try {
     const result = await pool.query(
@@ -184,6 +189,7 @@ export const deleteUsers = async (user_nos: number[]) => {
   }
 };
 
+// restore deleted User based on an array of company IDs
 export const restoreUsers = async (user_nos: number[]) => {
   const query = `
       UPDATE user_info
@@ -205,6 +211,7 @@ export const restoreUsers = async (user_nos: number[]) => {
   }
 };
 
+// get All Interpreters with optional query parameters for filtering and pagination
 export const getAllInterpreters = async (
   page: number,
   limit: number,
@@ -334,7 +341,10 @@ export const getAllInterpreters = async (
   }
 };
 
-export const getAllInterpretersLanguagesId = async (): Promise<User[]> => {
+// get All active Interpreters languages Id
+export const getActiveAllInterpretersLanguagesId = async (): Promise<
+  User[]
+> => {
   const query = `
     SELECT 
       user_info.user_no,
@@ -363,6 +373,7 @@ export const getAllInterpretersLanguagesId = async (): Promise<User[]> => {
   }
 };
 
+// get All Contractors with optional query parameters for filtering and pagination
 export const getAllContractors = async (
   page: number,
   limit: number,
@@ -477,6 +488,7 @@ export const getAllContractors = async (
   }
 };
 
+// get All Administrators with optional query parameters for filtering and pagination
 export const getAllAdministrators = async (
   page: number,
   limit: number,
@@ -586,6 +598,7 @@ export const getAllAdministrators = async (
   }
 };
 
+// validate Contractors Authentication
 export const getContractorsAuth = async (
   mail_address: string
 ): Promise<
@@ -608,6 +621,7 @@ export const getContractorsAuth = async (
   }
 };
 
+// validate Interpreters Authentication
 export const getInterpretersAuth = async (
   mail_address: string
 ): Promise<
@@ -630,6 +644,7 @@ export const getInterpretersAuth = async (
   }
 };
 
+// validate Administrators Authentication
 export const getAdministratorsAuth = async (
   mail_address: string
 ): Promise<

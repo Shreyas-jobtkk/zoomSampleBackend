@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as companyModel from "../models/companyModel.js";
 import { CompanyData } from "../types/companyTypes";
 
+// Controller to create a new company
 export const createCompanyController = async (req: Request, res: Response) => {
   const { company_name, company_name_furigana, company_note }: CompanyData =
     req.body;
@@ -17,6 +18,7 @@ export const createCompanyController = async (req: Request, res: Response) => {
   }
 };
 
+// Controller to get a company by its ID
 export const getCompanyController = async (req: Request, res: Response) => {
   const company_no = Number(req.params.company_no);
   try {
@@ -30,6 +32,7 @@ export const getCompanyController = async (req: Request, res: Response) => {
   }
 };
 
+// Controller to update a company by its ID
 export const updateCompanyController = async (req: Request, res: Response) => {
   const company_no = Number(req.params.company_no);
   const { company_name, company_name_furigana, company_note }: CompanyData =
@@ -49,6 +52,7 @@ export const updateCompanyController = async (req: Request, res: Response) => {
   }
 };
 
+// Controller to delete companies based on an array of company IDs
 export const deleteCompaniesController = async (
   req: Request,
   res: Response
@@ -68,6 +72,7 @@ export const deleteCompaniesController = async (
   }
 };
 
+// Controller to restore deleted companies based on an array of company IDs
 export const restoreCompaniesController = async (
   req: Request,
   res: Response
@@ -88,6 +93,7 @@ export const restoreCompaniesController = async (
   }
 };
 
+// Controller to fetch all companies with optional query parameters for filtering and pagination
 export const getAllCompaniesController = async (
   req: Request,
   res: Response
@@ -127,6 +133,7 @@ export const getAllCompaniesController = async (
   }
 };
 
+// Controller to fetch company numbers and names for selection options
 export const getCompanyNamesController = async (
   req: Request,
   res: Response

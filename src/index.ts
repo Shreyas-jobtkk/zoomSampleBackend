@@ -46,9 +46,9 @@ const io = new Server(server, {
 });
 
 // get All Interpreters LanguagesId
-const getAllInterpretersLanguagesId = async () => {
+const getActiveAllInterpretersLanguagesId = async () => {
   try {
-    const interpreters = await userModel.getAllInterpretersLanguagesId();
+    const interpreters = await userModel.getActiveAllInterpretersLanguagesId();
     return interpreters;
   } catch (error) {
     throw new Error(
@@ -78,7 +78,7 @@ io.on("connection", (socket) => {
     while (reqUsers.length > 0) {
       for (const user of [...reqUsers]) {
         const processLanguageNo = user.languageSupportNo;
-        const interpreters = await getAllInterpretersLanguagesId();
+        const interpreters = await getActiveAllInterpretersLanguagesId();
 
         // Get a unique list of all languages interpreters can translate
         const uniqueLanguages = [
