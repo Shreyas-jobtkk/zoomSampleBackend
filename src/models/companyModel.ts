@@ -2,7 +2,6 @@ import pool from "../db.js";
 import { CompanyData } from "../types/companyTypes";
 
 export const createCompany = async (companyData: CompanyData) => {
-  // console.log(157, companyData);
   const { company_name, company_name_furigana, company_note } = companyData;
   try {
     const result = await pool.query(

@@ -3,7 +3,7 @@ import * as languagesModel from "../models/languagesModel";
 import { Request, Response } from "express";
 
 // Create a new language
-export const createLanguage = async (
+export const createLanguageController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
@@ -21,7 +21,10 @@ export const createLanguage = async (
 };
 
 // Get all languages
-export const getAllLanguages = async (req: Request, res: Response) => {
+export const getAllLanguagesController = async (
+  req: Request,
+  res: Response
+) => {
   // console.log("Fetching languages with query:", req.query);
 
   const {
@@ -58,7 +61,7 @@ export const getAllLanguages = async (req: Request, res: Response) => {
 };
 
 // Get multiple languages by IDs
-export const getLanguagesById = async (
+export const getLanguagesByIdController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
@@ -79,7 +82,7 @@ export const getLanguagesById = async (
 };
 
 // Get a language by ID
-export const getLanguage = async (
+export const getLanguageController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
@@ -96,7 +99,7 @@ export const getLanguage = async (
 };
 
 // Update a language
-export const updateLanguage = async (
+export const updateLanguageController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
@@ -118,7 +121,7 @@ export const updateLanguage = async (
 };
 
 // Delete languages
-export const deleteLanguages = async (
+export const deleteLanguagesController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
@@ -160,7 +163,7 @@ export const restoreLanguagesController = async (
 };
 
 // Get only language_name and languages_support_no
-export const getLanguageNames = async (
+export const getLanguageNamesController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {

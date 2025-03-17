@@ -35,7 +35,7 @@ export const createCallLogController = async (req: Request, res: Response) => {
   }
 };
 
-export const getCallLogsController = async (req: Request, res: Response) => {
+export const getAllCallLogsController = async (req: Request, res: Response) => {
   console.log(7777, req.query);
   // Destructuring query parameters with fallback values
   const {
