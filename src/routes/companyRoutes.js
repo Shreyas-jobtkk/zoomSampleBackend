@@ -3,12 +3,12 @@ import * as companyController from "../controllers/companyController";
 
 const router = express.Router();
 
-router.put("/restore", companyController.restoreCompanies);
-router.put("/:company_no", companyController.updateCompany); // Update a company
-router.get("/names", companyController.getCompanyNames);
-router.get("/:company_no", companyController.getCompany); // Get a single company by ID
-router.post("/", companyController.createCompany); // Create a new company
-router.delete("/", companyController.deleteCompanies); // Delete companies
-router.get("/", companyController.getCompanies); // Get all companies
+router.put("/restore", companyController.restoreCompaniesController); // restore logically deleted companies
+router.put("/:company_no", companyController.updateCompanyController); // Update a company
+router.get("/names", companyController.getCompanyNamesController); // Get all company names
+router.get("/:company_no", companyController.getCompanyController); // Get a single company by ID
+router.post("/", companyController.createCompanyController); // Create a new company
+router.delete("/", companyController.deleteCompaniesController); // logically Delete companies
+router.get("/", companyController.getCompaniesController); // Get all companies
 
 export default router;

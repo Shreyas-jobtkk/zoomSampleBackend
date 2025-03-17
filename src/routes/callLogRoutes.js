@@ -6,8 +6,8 @@ const router = express.Router();
 // router.put("/:company_no", callLogController.updateCompany); // Update a company
 // router.get("/names", callLogController.getCompanyNames);
 // router.get("/:company_no", callLogController.getCompany); // Get a single company by ID
-router.post("/", callLogController.createCallLog); // Create a new company
+router.post("/", callLogController.createCallLogController); // Create a new company
 // router.delete("/", callLogController.deleteCompanies); // Delete companies
-router.get("/", callLogController.getCallLogs); // Get all companies
+router.get("/", callLogController.getCallLogsController); // Get all companies
 
 export default router;

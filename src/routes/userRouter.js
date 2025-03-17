@@ -4,21 +4,23 @@ import * as userController from "../controllers/userController";
 const router = express.Router();
 
 router.put("/restore", userController.restoreUsersController); // Handle restoring users
-// router.get("/names", userController.getUserNames); // Get user names
-router.get("/interpreter", userController.getAllInterpreters); // Get all interpreters
-router.get("/contractor", userController.getAllContractors); // Get all interpreters
-router.post("/contractor/auth", userController.getContractorsAuth); // Get all interpreters
-router.post("/interpreter/auth", userController.getInterpretersAuth); // Get all interpreters
+router.get("/interpreter", userController.getAllInterpretersController); // Get all interpreters
+router.get("/contractor", userController.getAllContractorsController); // Get all interpreters
+router.post("/contractor/auth", userController.getContractorsAuthController); // Get all interpreters
+router.post("/interpreter/auth", userController.getInterpretersAuthController); // Get all interpreters
 
 router.put(
   "/interpreter/:interpreterNo",
-  userController.updateInterpretersStatus
+  userController.updateInterpretersStatusController
 ); // Get all interpreters
-router.post("/administrator/auth", userController.getAdministratorsAuth); // Get all interpreters
-router.get("/administrator", userController.getAllAdministrators); // Get all interpreters
-router.get("/:userNo", userController.getUserById); // Get a single user by ID
-router.post("/", userController.createUser); // Create a new user
-router.put("/:userNo", userController.updateUser); // Update a user
-router.delete("/", userController.deleteUsers); // Delete users
+router.post(
+  "/administrator/auth",
+  userController.getAdministratorsAuthController
+); // Get all interpreters
+router.get("/administrator", userController.getAllAdministratorsController); // Get all interpreters
+router.get("/:userNo", userController.getUserByIdController); // Get a single user by ID
+router.post("/", userController.createUserController); // Create a new user
+router.put("/:userNo", userController.updateUserController); // Update a user
+router.delete("/", userController.deleteUsersController); // Delete users
 
 export default router;

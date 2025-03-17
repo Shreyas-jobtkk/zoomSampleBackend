@@ -2,7 +2,7 @@ import * as userModel from "../models/userModel";
 import { Request, Response } from "express";
 import { AuthBody } from "../types/userTypes";
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUserController = async (req: Request, res: Response) => {
   const {
     store_no,
     user_name_last,
@@ -50,7 +50,7 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserById = async (req: Request, res: Response) => {
+export const getUserByIdController = async (req: Request, res: Response) => {
   const userNo = Number(req.params.userNo);
   try {
     const user = await userModel.getUserById(userNo);
@@ -64,7 +64,7 @@ export const getUserById = async (req: Request, res: Response) => {
   // console.log(156, Number(req.params.userNo));
 };
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUserController = async (req: Request, res: Response) => {
   const userNo = Number(req.params.userNo);
   const {
     user_name_last,
@@ -109,7 +109,10 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 };
 
-export const updateInterpretersStatus = async (req: Request, res: Response) => {
+export const updateInterpretersStatusController = async (
+  req: Request,
+  res: Response
+) => {
   const interpreter_no = req.params.interpreterNo;
   const { interpreter_status } = req.body;
 
@@ -134,7 +137,7 @@ export const updateInterpretersStatus = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteUsers = async (req: Request, res: Response) => {
+export const deleteUsersController = async (req: Request, res: Response) => {
   // const { ids }: DeleteUsersBody = req.body; // Array of user IDs to delete
   const { user_nos } = req.body as { user_nos: number[] };
   try {
@@ -176,7 +179,10 @@ export const restoreUsersController = async (
   }
 };
 
-export const getAllInterpreters = async (req: Request, res: Response) => {
+export const getAllInterpretersController = async (
+  req: Request,
+  res: Response
+) => {
   // console.log("Request Query:", req.query);
   const {
     page,
@@ -246,7 +252,10 @@ export const getAllInterpreters = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllContractors = async (req: Request, res: Response) => {
+export const getAllContractorsController = async (
+  req: Request,
+  res: Response
+) => {
   const {
     page,
     limit,
@@ -301,7 +310,10 @@ export const getAllContractors = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllAdministrators = async (req: Request, res: Response) => {
+export const getAllAdministratorsController = async (
+  req: Request,
+  res: Response
+) => {
   const {
     page,
     limit,
@@ -356,7 +368,10 @@ export const getAllAdministrators = async (req: Request, res: Response) => {
   }
 };
 
-export const getContractorsAuth = async (req: Request, res: Response) => {
+export const getContractorsAuthController = async (
+  req: Request,
+  res: Response
+) => {
   const { mail_address, user_password }: AuthBody = req.body;
   try {
     // Fetch the user from the database by email address
@@ -397,7 +412,10 @@ export const getContractorsAuth = async (req: Request, res: Response) => {
   }
 };
 
-export const getInterpretersAuth = async (req: Request, res: Response) => {
+export const getInterpretersAuthController = async (
+  req: Request,
+  res: Response
+) => {
   const { mail_address, user_password }: AuthBody = req.body;
   try {
     const users = await userModel.getInterpretersAuth(mail_address);
@@ -436,7 +454,10 @@ export const getInterpretersAuth = async (req: Request, res: Response) => {
   }
 };
 
-export const getAdministratorsAuth = async (req: Request, res: Response) => {
+export const getAdministratorsAuthController = async (
+  req: Request,
+  res: Response
+) => {
   const { mail_address, user_password }: AuthBody = req.body;
   try {
     const users = await userModel.getAdministratorsAuth(mail_address);

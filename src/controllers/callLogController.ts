@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as callLogModel from "../models/callLogModel";
 import { CallLogData } from "../types/callLogTypes";
 
-export const createCallLog = async (req: Request, res: Response) => {
+export const createCallLogController = async (req: Request, res: Response) => {
   // // console.log(158, req.body);
   const {
     interpreter_no,
@@ -35,7 +35,7 @@ export const createCallLog = async (req: Request, res: Response) => {
   }
 };
 
-export const getCallLogs = async (req: Request, res: Response) => {
+export const getCallLogsController = async (req: Request, res: Response) => {
   console.log(7777, req.query);
   // Destructuring query parameters with fallback values
   const {

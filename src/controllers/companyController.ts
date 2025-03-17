@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as companyModel from "../models/companyModel.js";
 import { CompanyData } from "../types/companyTypes";
 
-export const createCompany = async (req: Request, res: Response) => {
+export const createCompanyController = async (req: Request, res: Response) => {
   const { company_name, company_name_furigana, company_note }: CompanyData =
     req.body;
   // console.log(156, req.body);
@@ -18,7 +18,7 @@ export const createCompany = async (req: Request, res: Response) => {
   }
 };
 
-export const getCompany = async (req: Request, res: Response) => {
+export const getCompanyController = async (req: Request, res: Response) => {
   const company_no = Number(req.params.company_no);
   try {
     const company = await companyModel.getCompanyById(company_no);
@@ -31,7 +31,7 @@ export const getCompany = async (req: Request, res: Response) => {
   }
 };
 
-export const updateCompany = async (req: Request, res: Response) => {
+export const updateCompanyController = async (req: Request, res: Response) => {
   const company_no = Number(req.params.company_no);
   const { company_name, company_name_furigana, company_note }: CompanyData =
     req.body;
@@ -51,7 +51,10 @@ export const updateCompany = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteCompanies = async (req: Request, res: Response) => {
+export const deleteCompaniesController = async (
+  req: Request,
+  res: Response
+) => {
   // // console.log(189, req.body);
   const { company_nos } = req.body as { company_nos: number[] }; // Expecting an array of IDs
   // // console.log(1892, req.body);
@@ -69,7 +72,10 @@ export const deleteCompanies = async (req: Request, res: Response) => {
   }
 };
 
-export const restoreCompanies = async (req: Request, res: Response) => {
+export const restoreCompaniesController = async (
+  req: Request,
+  res: Response
+) => {
   const { company_nos } = req.body as { company_nos: number[] }; // Expecting an array of IDs
 
   try {
@@ -86,7 +92,7 @@ export const restoreCompanies = async (req: Request, res: Response) => {
   }
 };
 
-export const getCompanies = async (req: Request, res: Response) => {
+export const getCompaniesController = async (req: Request, res: Response) => {
   // Destructuring query parameters with fallback values
   const {
     page,
@@ -124,7 +130,10 @@ export const getCompanies = async (req: Request, res: Response) => {
   }
 };
 
-export const getCompanyNames = async (req: Request, res: Response) => {
+export const getCompanyNamesController = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const companies = await companyModel.getCompanyNumbersAndNames();
     res.status(200).json(companies);
