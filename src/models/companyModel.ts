@@ -1,6 +1,7 @@
 import pool from "../db.js";
 import { CompanyData } from "../types/companyTypes";
 
+// create a new company
 export const createCompany = async (companyData: CompanyData) => {
   const { company_name, company_name_furigana, company_note } = companyData;
   try {
@@ -16,6 +17,7 @@ export const createCompany = async (companyData: CompanyData) => {
   }
 };
 
+// get a company by its ID
 export const getCompanyById = async (company_no: number) => {
   try {
     const result = await pool.query(
@@ -29,6 +31,7 @@ export const getCompanyById = async (company_no: number) => {
   }
 };
 
+// update a company by its ID
 export const updateCompany = async (
   company_no: number,
   companyData: CompanyData
@@ -52,6 +55,7 @@ export const updateCompany = async (
   }
 };
 
+// delete companies based on an array of company IDs
 export const deleteCompanies = async (company_nos: number[]) => {
   try {
     const result = await pool.query(
@@ -68,6 +72,7 @@ export const deleteCompanies = async (company_nos: number[]) => {
   }
 };
 
+// restore deleted companies based on an array of company IDs
 export const restoreCompanies = async (company_nos: number[]) => {
   try {
     const result = await pool.query(
@@ -84,6 +89,7 @@ export const restoreCompanies = async (company_nos: number[]) => {
   }
 };
 
+//fetch all companies with optional query parameters for filtering and pagination
 export const getAllCompanies = async (
   page: number,
   limit: number,
@@ -152,6 +158,7 @@ export const getAllCompanies = async (
   }
 };
 
+// fetch company numbers and names for selection options
 export const getCompanyNumbersAndNames = async () => {
   try {
     const result = await pool.query(

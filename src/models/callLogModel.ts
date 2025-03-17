@@ -1,9 +1,8 @@
 import pool from "../db.js";
 import { CallLogData } from "../types/callLogTypes";
 
+//create a new call log entry
 export const createCallLog = async (callLogData: CallLogData) => {
-  // console.log(157, callLogData);
-
   const {
     interpreter_no,
     languages_support_no,
@@ -43,6 +42,7 @@ export const createCallLog = async (callLogData: CallLogData) => {
   }
 };
 
+// fetch all call logs with optional query parameters
 export const getAllCallLogs = async (
   page: number,
   limit: number,
