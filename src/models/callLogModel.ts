@@ -54,6 +54,7 @@ export const getAllCallLogs = async (
   call_status: string
 ) => {
   console.log(155, start_time, end_time);
+
   try {
     const values: any[] = [];
     const conditions: string[] = [];
@@ -132,14 +133,14 @@ export const getAllCallLogs = async (
       dataQuery += ` WHERE ${conditions.join(" AND ")}`;
     }
 
-    // Pagination
+    // Pagination and Sorting by call_log_no
     const offset = (page - 1) * limit;
     values.push(limit, offset);
-    dataQuery += ` ORDER BY cli.call_start DESC LIMIT $${values.length - 1} OFFSET $${values.length}`;
+    // Now sorting by `call_log_no` for correct order
+    dataQuery += ` ORDER BY cli.call_log_no ASC LIMIT $${values.length - 1} OFFSET $${values.length}`;
 
     // Execute the query
     const result = await pool.query(dataQuery, values);
-    // console.log(7777, result.rows);
     return { totalRecords, callLogs: result.rows };
   } catch (err: any) {
     console.error("Error fetching call logs:", err.message);
