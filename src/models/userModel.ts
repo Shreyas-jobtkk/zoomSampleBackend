@@ -16,8 +16,6 @@ export const createUser = async (userData: UserData): Promise<User> => {
     translate_languages,
     password_expire,
     user_password,
-    meeting_id,
-    meeting_passcode,
     user_note,
   } = userData;
 
@@ -28,12 +26,12 @@ export const createUser = async (userData: UserData): Promise<User> => {
 
     const result = await pool.query(
       `INSERT INTO user_info (
-          store_no, user_name_last,user_name_last_furigana,
-          user_name_first,user_name_first_furigana, user_type, mail_address, 
+          store_no, user_name_last, user_name_last_furigana,
+          user_name_first, user_name_first_furigana, user_type, mail_address, 
           tel, tel_extension, translate_languages, password_expire, user_password, 
-          meeting_id, meeting_passcode, user_note, created_at, updated_at
+          user_note, created_at, updated_at
         ) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
         RETURNING *`,
       [
         Number(store_no),
@@ -48,8 +46,6 @@ export const createUser = async (userData: UserData): Promise<User> => {
         translatedLanguages,
         password_expire,
         user_password,
-        meeting_id,
-        meeting_passcode,
         user_note,
       ]
     );
@@ -106,8 +102,6 @@ export const updateUser = async (
     tel_extension,
     translate_languages,
     user_password,
-    meeting_id,
-    meeting_passcode,
     user_note,
     store_no,
   } = userData;
@@ -123,9 +117,9 @@ export const updateUser = async (
         user_name_first = $3, user_name_first_furigana = $4,
         mail_address = $5, tel = $6, tel_extension = $7, 
         translate_languages = $8, 
-        user_password = $9, meeting_id = $10, meeting_passcode = $11, 
-        user_note = $12, store_no = $13, updated_at = CURRENT_TIMESTAMP
-      WHERE user_no = $14 RETURNING *`,
+        user_password = $9, 
+        user_note = $10, store_no = $11, updated_at = CURRENT_TIMESTAMP
+      WHERE user_no = $12 RETURNING *`,
       [
         user_name_last,
         user_name_last_furigana,
@@ -136,8 +130,6 @@ export const updateUser = async (
         tel_extension,
         translatedLanguages,
         user_password,
-        meeting_id,
-        meeting_passcode,
         user_note,
         Number(store_no),
         id,

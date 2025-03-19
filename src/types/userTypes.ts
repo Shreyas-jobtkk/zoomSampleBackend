@@ -11,8 +11,6 @@ export interface UserData {
   translate_languages: number[];
   password_expire: Date;
   user_password: string;
-  meeting_id: string;
-  meeting_passcode: string;
   user_note: string;
 }
 
@@ -26,8 +24,6 @@ export interface UpdateUserData {
   tel_extension: string;
   translate_languages: number[];
   user_password: string;
-  meeting_id: string;
-  meeting_passcode: string;
   user_note: string;
   store_no: string;
 }

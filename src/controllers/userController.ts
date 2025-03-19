@@ -17,8 +17,6 @@ export const createUserController = async (req: Request, res: Response) => {
     translate_languages,
     password_expire,
     user_password,
-    meeting_id,
-    meeting_passcode,
     user_note,
   } = req.body;
 
@@ -40,8 +38,6 @@ export const createUserController = async (req: Request, res: Response) => {
       translate_languages: translatedLanguages,
       password_expire,
       user_password,
-      meeting_id,
-      meeting_passcode,
       user_note,
     });
 
@@ -79,8 +75,6 @@ export const updateUserController = async (req: Request, res: Response) => {
     tel_extension,
     translate_languages,
     user_password,
-    meeting_id,
-    meeting_passcode,
     user_note,
     store_no,
   } = req.body;
@@ -96,8 +90,6 @@ export const updateUserController = async (req: Request, res: Response) => {
       tel_extension,
       translate_languages,
       user_password,
-      meeting_id,
-      meeting_passcode,
       user_note,
       store_no,
     });
