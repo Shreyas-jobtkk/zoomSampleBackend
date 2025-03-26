@@ -253,7 +253,7 @@ export const getStoreDetailsByCompany = async (
   const query = `
     SELECT store_no, store_name
     FROM store_info
-    WHERE company_no = $1 AND store_delete = false
+    WHERE company_no = $1 AND store_delete = false ORDER BY store_no ASC
   `;
 
   try {

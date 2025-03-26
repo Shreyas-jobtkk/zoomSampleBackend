@@ -159,7 +159,7 @@ export const getLanguageNames = async (): Promise<
 > => {
   try {
     const result = await pool.query(
-      "SELECT language_name_furigana, language_name, languages_support_no FROM languages_support_info"
+      "SELECT language_name_furigana, language_name, languages_support_no FROM languages_support_info  ORDER BY languages_support_no ASC"
     );
     return result.rows; // TypeScript will infer the correct type
   } catch (err) {

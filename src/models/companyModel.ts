@@ -162,7 +162,7 @@ export const getAllCompanies = async (
 export const getCompanyNumbersAndNames = async () => {
   try {
     const result = await pool.query(
-      "SELECT company_no, company_name FROM company_info WHERE company_deleted = false"
+      "SELECT company_no, company_name FROM company_info WHERE company_deleted = false ORDER BY company_no ASC"
     );
     return result.rows;
   } catch (err: any) {

@@ -327,7 +327,7 @@ export const getAllInterpreters = async (
       store_info.company_no = company_info.company_no AND company_info.company_deleted = false
     ${whereClause}
     ORDER BY 
-      user_info.store_no
+      user_info.user_no ASC
     LIMIT $${values.length + 1} OFFSET $${values.length + 2};
   `;
 
@@ -439,7 +439,7 @@ export const getAllContractors = async (
       store_info.company_no = company_info.company_no AND company_info.company_deleted = false
     ${whereClause}
     ORDER BY 
-      user_info.store_no
+      user_info.user_no ASC
     LIMIT $${values.length + 1} OFFSET $${values.length + 2};
   `;
 
@@ -549,7 +549,7 @@ export const getAllAdministrators = async (
       store_info.company_no = company_info.company_no AND company_info.company_deleted = false
     ${whereClause}
     ORDER BY 
-      user_info.store_no
+      user_info.user_no ASC
     LIMIT $${values.length + 1} OFFSET $${values.length + 2};
   `;
 
