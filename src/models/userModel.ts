@@ -203,6 +203,38 @@ export const restoreUsers = async (user_nos: number[]) => {
   }
 };
 
+// get All active Interpreters languages Id
+export const getActiveAllInterpretersLanguagesId = async (): Promise<
+  User[]
+> => {
+  const query = `
+    SELECT 
+      user_info.user_no,
+      user_info.translate_languages
+    FROM 
+      user_info
+    JOIN 
+      store_info
+    ON 
+      user_info.store_no = store_info.store_no AND store_info.store_delete = false
+    JOIN 
+      company_info
+    ON 
+      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
+    WHERE 
+      user_info.user_type = 'interpreter' AND user_info.user_status = 'active'
+    ORDER BY 
+      user_info.store_no;
+  `;
+
+  try {
+    const result = await pool.query(query);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Failed to fetch users.");
+  }
+};
+
 // get All Interpreters with optional query parameters for filtering and pagination
 export const getAllInterpreters = async (
   page: number,
@@ -333,38 +365,6 @@ export const getAllInterpreters = async (
   }
 };
 
-// get All active Interpreters languages Id
-export const getActiveAllInterpretersLanguagesId = async (): Promise<
-  User[]
-> => {
-  const query = `
-    SELECT 
-      user_info.user_no,
-      user_info.translate_languages
-    FROM 
-      user_info
-    JOIN 
-      store_info
-    ON 
-      user_info.store_no = store_info.store_no AND store_info.store_delete = false
-    JOIN 
-      company_info
-    ON 
-      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
-    WHERE 
-      user_info.user_type = 'interpreter' AND user_info.user_status = 'active'
-    ORDER BY 
-      user_info.store_no;
-  `;
-
-  try {
-    const result = await pool.query(query);
-    return result.rows;
-  } catch (err) {
-    throw new Error("Failed to fetch users.");
-  }
-};
-
 // get All Contractors with optional query parameters for filtering and pagination
 export const getAllContractors = async (
   page: number,
@@ -377,105 +377,100 @@ export const getAllContractors = async (
   contractor_name_furigana_first: string,
   contractor_name_last: string,
   contractor_name_furigana_last: string
-) => {
+): Promise<{ totalRecords: number; contractors: User[] }> => {
+  const values: any[] = [];
+  const conditions: string[] = ["user_info.user_type = 'contractor'"];
+
+  if (company_no) {
+    values.push(company_no);
+    conditions.push(`store_info.company_no = $${values.length}`);
+  }
+  if (store_no) {
+    values.push(store_no);
+    conditions.push(`user_info.store_no = $${values.length}`);
+  }
+  if (contractor_no_min) {
+    values.push(contractor_no_min);
+    conditions.push(`user_info.user_no >= $${values.length}`);
+  }
+  if (contractor_no_max) {
+    values.push(contractor_no_max);
+    conditions.push(`user_info.user_no <= $${values.length}`);
+  }
+  if (contractor_name_first) {
+    values.push(`%${contractor_name_first}%`);
+    conditions.push(`user_info.user_name_first ILIKE $${values.length}`);
+  }
+  if (contractor_name_furigana_first) {
+    values.push(`%${contractor_name_furigana_first}%`);
+    conditions.push(
+      `user_info.user_name_first_furigana ILIKE $${values.length}`
+    );
+  }
+  if (contractor_name_last) {
+    values.push(`%${contractor_name_last}%`);
+    conditions.push(`user_info.user_name_last ILIKE $${values.length}`);
+  }
+  if (contractor_name_furigana_last) {
+    values.push(`%${contractor_name_furigana_last}%`);
+    conditions.push(
+      `user_info.user_name_last_furigana ILIKE $${values.length}`
+    );
+  }
+
+  const whereClause =
+    conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+  const query = `
+    SELECT 
+      user_info.*, 
+      store_info.store_name,
+      store_info.company_no,
+      company_info.company_name
+    FROM 
+      user_info
+    JOIN 
+      store_info
+    ON 
+      user_info.store_no = store_info.store_no AND store_info.store_delete = false
+    JOIN 
+      company_info
+    ON 
+      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
+    ${whereClause}
+    ORDER BY 
+      user_info.store_no
+    LIMIT $${values.length + 1} OFFSET $${values.length + 2};
+  `;
+
+  const countQuery = `
+    SELECT COUNT(*) 
+    FROM 
+      user_info
+    JOIN 
+      store_info
+    ON 
+      user_info.store_no = store_info.store_no AND store_info.store_delete = false
+    JOIN 
+      company_info
+    ON 
+      store_info.company_no = company_info.company_no AND company_info.company_deleted = false
+    ${whereClause};
+  `;
+
+  values.push(limit, (page - 1) * limit);
+
   try {
-    const values: any[] = [];
-    const conditions: string[] = [];
+    // Get contractors data
+    const result = await pool.query(query, values);
+    const totalRecordsResult = await pool.query(
+      countQuery,
+      values.slice(0, -2)
+    );
 
-    // Apply company_no filter
-    if (company_no !== "") {
-      values.push(company_no);
-      conditions.push(`company_info.company_no = $${values.length}`);
-    }
-
-    // Apply store_no filter
-    if (store_no !== "") {
-      values.push(store_no);
-      conditions.push(`user_info.store_no = $${values.length}`);
-    }
-
-    // Apply contractor_no filters
-    if (contractor_no_min !== "" && contractor_no_max !== "") {
-      values.push(contractor_no_min, contractor_no_max);
-      conditions.push(
-        `user_info.user_no BETWEEN $${values.length - 1} AND $${values.length}`
-      );
-    } else if (contractor_no_min !== "") {
-      values.push(contractor_no_min);
-      conditions.push(`user_info.user_no >= $${values.length}`);
-    } else if (contractor_no_max !== "") {
-      values.push(contractor_no_max);
-      conditions.push(`user_info.user_no <= $${values.length}`);
-    }
-
-    // Apply name filters
-    if (contractor_name_first) {
-      values.push(`%${contractor_name_first}%`);
-      conditions.push(`user_info.user_name_first ILIKE $${values.length}`);
-    }
-    if (contractor_name_furigana_first) {
-      values.push(`%${contractor_name_furigana_first}%`);
-      conditions.push(
-        `user_info.user_name_first_furigana ILIKE $${values.length}`
-      );
-    }
-    if (contractor_name_last) {
-      values.push(`%${contractor_name_last}%`);
-      conditions.push(`user_info.user_name_last ILIKE $${values.length}`);
-    }
-    if (contractor_name_furigana_last) {
-      values.push(`%${contractor_name_furigana_last}%`);
-      conditions.push(
-        `user_info.user_name_last_furigana ILIKE $${values.length}`
-      );
-    }
-
-    // Prepare the count query
-    let countQuery = `
-      SELECT COUNT(*) FROM user_info
-      JOIN store_info ON user_info.store_no = store_info.store_no AND store_info.store_delete = false
-      JOIN company_info ON store_info.company_no = company_info.company_no AND company_info.company_deleted = false
-      WHERE user_info.user_type = 'contractor'
-    `;
-
-    if (conditions.length > 0) {
-      countQuery += ` AND ${conditions.join(" AND ")}`;
-    }
-
-    // Execute the count query
-    const countResult = await pool.query(countQuery, values);
-    const totalRecords = parseInt(countResult.rows[0].count, 10);
-
-    // Prepare the data query
-    let dataQuery = `
-      SELECT 
-        user_info.*, 
-        store_info.store_name, 
-        store_info.company_no, 
-        company_info.company_name
-      FROM user_info
-      JOIN store_info ON user_info.store_no = store_info.store_no AND store_info.store_delete = false
-      JOIN company_info ON store_info.company_no = company_info.company_no AND company_info.company_deleted = false
-      WHERE user_info.user_type = 'contractor'
-    `;
-
-    let dataValues = [...values];
-
-    if (conditions.length > 0) {
-      dataQuery += ` AND ${conditions.join(" AND ")}`;
-    }
-
-    // Pagination
-    const offset = (page - 1) * limit;
-    dataValues.push(limit, offset);
-    dataQuery += ` ORDER BY user_info.store_no ASC LIMIT $${dataValues.length - 1} OFFSET $${dataValues.length}`;
-
-    // Execute the data query
-    const result = await pool.query(dataQuery, dataValues);
-    // console.log(155, totalRecords);
+    const totalRecords = parseInt(totalRecordsResult.rows[0].count, 10);
     return { totalRecords, contractors: result.rows };
-  } catch (err: any) {
-    console.error("Error fetching contractors:", err.message);
+  } catch (err) {
     throw new Error("Failed to fetch contractors.");
   }
 };
