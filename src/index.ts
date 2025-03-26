@@ -53,6 +53,8 @@ app.use("/languages", languagesRoutes);
 app.use("/user", userRoutes);
 app.use("/callLog", callLogRoutes);
 
+export { app, io };
+
 // Start the server
 server.listen(port, () => {
   // // // // console.log(`Server listening on port ${port}`);
