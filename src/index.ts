@@ -17,7 +17,7 @@ pool.connect((err: any) => {
   if (err) {
     console.error("Error connecting to the database:", err.stack);
   } else {
-    // // // console.log("Connected to the PostgreSQL database");
+    console.log("Connected to the PostgreSQL database");
   }
 });
 
@@ -45,18 +45,6 @@ const io = new Server(server, {
   },
 });
 
-// get All Interpreters LanguagesId
-const getActiveAllInterpretersLanguagesId = async () => {
-  try {
-    const interpreters = await userModel.getActiveAllInterpretersLanguagesId();
-    return interpreters;
-  } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "An unexpected error occurred"
-    );
-  }
-};
-
 // Array to store user call requests waiting for an interpreter
 let reqUsers: any = [];
 
@@ -78,7 +66,8 @@ io.on("connection", (socket) => {
     while (reqUsers.length > 0) {
       for (const user of [...reqUsers]) {
         const processLanguageNo = user.languageSupportNo;
-        const interpreters = await getActiveAllInterpretersLanguagesId();
+        const interpreters =
+          await userModel.getActiveAllInterpretersLanguagesId();
 
         // Get a unique list of all languages interpreters can translate
         const uniqueLanguages = [
