@@ -10,6 +10,7 @@ import userRoutes from "./routes/userRouter.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import storeRoutes from "./routes/storeRoutes.js";
 import setupSocket from "./socket.js";
+import setupSocketForCS from "./socketForCS.js";
 
 // Test the database connection
 pool.connect((err: any) => {
@@ -45,6 +46,7 @@ const io = new Server(server, {
 });
 
 setupSocket(io);
+setupSocketForCS(io);
 
 app.use("/zoomForCS", signatureForCS);
 app.use("/company", companyRoutes);
